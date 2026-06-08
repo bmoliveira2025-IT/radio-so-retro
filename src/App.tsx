@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import HomeView from './components/HomeView';
 import NowPlayingView from './components/NowPlayingView';
 import SignUpView from './components/SignUpView';
+import { InstallPrompt } from './components/InstallPrompt';
 
 export type Screen = 'signup' | 'home' | 'now_playing';
 

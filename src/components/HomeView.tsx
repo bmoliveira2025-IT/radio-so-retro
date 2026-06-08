@@ -49,17 +49,6 @@ const HomeView: React.FC<HomeViewProps> = ({
 
   return (
     <div className="home-container">
-      <div className="sidebar">
-        <div 
-          className={`sidebar-tab ${activeTab === 'favorites' ? 'active' : ''}`}
-          onClick={() => setActiveTab('favorites')}
-        >Favoritas</div>
-        <div 
-          className={`sidebar-tab ${activeTab === 'all' ? 'active' : ''}`}
-          onClick={() => setActiveTab('all')}
-        >Todas as rádios</div>
-      </div>
-      
       <div className="home-main">
         <header className="home-header">
           <div className="app-branding">
@@ -73,12 +62,28 @@ const HomeView: React.FC<HomeViewProps> = ({
             </div>
           </div>
         </header>
-        
+
         <div className="category-section">
-          <h3 className="category-title">
-            {activeTab === 'all' ? 'Populares' : 'Rádios Favoritas'}
-          </h3>
-          
+          <div className="category-header">
+            <h3 className="category-title">
+              {activeTab === 'all' ? 'Populares' : 'Favoritas'}
+            </h3>
+            <div className="tab-pills">
+              <button
+                className={`tab-pill ${activeTab === 'all' ? 'active' : ''}`}
+                onClick={() => setActiveTab('all')}
+              >
+                Todas as rádios
+              </button>
+              <button
+                className={`tab-pill ${activeTab === 'favorites' ? 'active' : ''}`}
+                onClick={() => setActiveTab('favorites')}
+              >
+                Favoritas
+              </button>
+            </div>
+          </div>
+
           <div className="stations-grid">
             {displayedStations.length === 0 ? (
               <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.9rem', gridColumn: 'span 2', textAlign: 'center', marginTop: '20px' }}>
@@ -86,9 +91,9 @@ const HomeView: React.FC<HomeViewProps> = ({
               </p>
             ) : (
               displayedStations.map(station => (
-                <StationCard 
-                  key={station.id} 
-                  station={station} 
+                <StationCard
+                  key={station.id}
+                  station={station}
                   isActive={currentStation?.id === station.id}
                   isFavorite={favorites.includes(station.id)}
                   onClick={() => onPlayStation(station)}
@@ -109,7 +114,7 @@ const HomeView: React.FC<HomeViewProps> = ({
             <button className="control-btn secondary" onClick={(e) => { e.stopPropagation(); onPrevious(); }}>
               <SkipBack size={20} fill="#fff" />
             </button>
-            
+
             <div className="hexagon-wrapper" onClick={(e) => {
               e.stopPropagation();
               onTogglePlay();
@@ -131,10 +136,10 @@ const HomeView: React.FC<HomeViewProps> = ({
 
           <div className="np-volume" onClick={(e) => e.stopPropagation()}>
             <span className="volume-icon"></span>
-            <input 
-              type="range" 
-              min="0" 
-              max="100" 
+            <input
+              type="range"
+              min="0"
+              max="100"
               value={volume}
               onChange={(e) => onVolumeChange(Number(e.target.value))}
               className="volume-slider"

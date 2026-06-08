@@ -28,8 +28,23 @@ function App() {
   const [currentStation, setCurrentStation] = useState<Station | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(65);
-  const [favorites, setFavorites] = useState<string[]>([]);
+  const [favorites, setFavorites] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('so_retro_favorites');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('so_retro_favorites', JSON.stringify(favorites));
+    } catch (e) {
+      console.error('Failed to save favorites to localStorage:', e);
+    }
+  }, [favorites]);
 
   useEffect(() => {
     if (audioRef.current) {

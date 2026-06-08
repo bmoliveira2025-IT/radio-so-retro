@@ -64,11 +64,9 @@
 }
 
 .app-logo-img {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  object-fit: cover;
-  box-shadow: 0 0 12px rgba(255, 42, 95, 0.5);
+  width: 48px;
+  height: 48px;
+  filter: drop-shadow(0 0 8px rgba(255, 42, 95, 0.6));
 }
 
 .app-name {

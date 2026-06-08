@@ -45,7 +45,7 @@ export const InstallPrompt: React.FC = () => {
     <div className="install-prompt-overlay">
       <div className="install-prompt-card">
         <div className="install-prompt-content">
-          <img src="/logo.png" alt="Só Retrô" className="install-logo" />
+          <img src="/logo.svg" alt="Só Retrô" className="install-logo" />
           <div className="install-text">
             <h4>Instalar Aplicativo</h4>
             <p>Adicione à sua tela inicial</p>

@@ -63,7 +63,7 @@ const HomeView: React.FC<HomeViewProps> = ({
       <div className="home-main">
         <header className="home-header">
           <div className="app-branding">
-            <img src="/logo.png" alt="Só Retrô" className="app-logo-img" />
+            <img src="/logo.svg" alt="Só Retrô" className="app-logo-img" />
             <span className="app-name">Só Retrô</span>
           </div>
           <div className="user-greeting">

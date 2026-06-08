@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PlayCircle, User, SkipBack, SkipForward } from 'lucide-react';
+import { User, SkipBack, SkipForward } from 'lucide-react';
 import type { Station } from '../types';
 import StationCard from './StationCard';
 import './HomeView.css';
@@ -104,7 +104,7 @@ const HomeView: React.FC<HomeViewProps> = ({
       </div>
 
       {currentStation && (
-        <div className="home-bottom-controls">
+        <div className="home-bottom-controls" onClick={onNavigateNowPlaying} style={{ cursor: 'pointer' }}>
           <div className="np-controls" style={{ marginBottom: '20px' }}>
             <button className="control-btn secondary" onClick={(e) => { e.stopPropagation(); onPrevious(); }}>
               <SkipBack size={20} fill="#fff" />

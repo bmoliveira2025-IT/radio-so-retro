@@ -15,6 +15,8 @@ interface HomeViewProps {
   onNext: () => void;
   favorites: string[];
   onToggleFavorite: (id: string) => void;
+  volume: number;
+  onVolumeChange: (vol: number) => void;
 }
 
 const HomeView: React.FC<HomeViewProps> = ({ 
@@ -27,7 +29,9 @@ const HomeView: React.FC<HomeViewProps> = ({
   onPrevious,
   onNext,
   favorites,
-  onToggleFavorite
+  onToggleFavorite,
+  volume,
+  onVolumeChange
 }) => {
   const [activeTab, setActiveTab] = useState<'all' | 'favorites'>('all');
 
@@ -125,17 +129,17 @@ const HomeView: React.FC<HomeViewProps> = ({
             </button>
           </div>
 
-          <div className="np-volume">
+          <div className="np-volume" onClick={(e) => e.stopPropagation()}>
             <span className="volume-icon"></span>
             <input 
               type="range" 
               min="0" 
               max="100" 
-              value={65} 
-              readOnly
+              value={volume}
+              onChange={(e) => onVolumeChange(Number(e.target.value))}
               className="volume-slider"
             />
-            <span className="volume-text">65%</span>
+            <span className="volume-text">{volume}%</span>
           </div>
         </div>
       )}

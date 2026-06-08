@@ -108,6 +108,8 @@ function App() {
             onNext={handleNext}
             favorites={favorites}
             onToggleFavorite={handleToggleFavorite}
+            volume={volume}
+            onVolumeChange={setVolume}
           />
         )}
         

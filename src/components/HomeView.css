@@ -1,20 +1,33 @@
+/* =====================================================
+   HOME CONTAINER — cadeia de flex sem overflow
+   ===================================================== */
+
 .home-container {
   height: 100%;
   width: 100%;
   display: flex;
+  flex-direction: row; /* sidebar à esquerda, main à direita */
   position: relative;
+  overflow: hidden;    /* CRÍTICO: impede que filhos causem scroll */
   background: radial-gradient(circle at 50% 50%, rgba(255, 42, 95, 0.05) 0%, transparent 60%);
 }
 
+/* =====================================================
+   SIDEBAR VERTICAL (portrait / desktop)
+   ===================================================== */
+
 .sidebar {
   width: 45px;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column-reverse;
   align-items: center;
-  padding: 20px 0;
+  padding-top: 20px;
+  padding-bottom: 20px;
   gap: 80px;
   background: transparent;
   z-index: 10;
+  overflow: hidden;
 }
 
 .sidebar-tab {
@@ -31,30 +44,36 @@
   text-transform: uppercase;
 }
 
-.sidebar-tab:hover {
-  color: white;
-}
+.sidebar-tab:hover  { color: white; }
+.sidebar-tab.active { color: white; font-weight: 700; }
 
-.sidebar-tab.active {
-  color: white;
-  font-weight: 700;
-}
+/* =====================================================
+   ÁREA PRINCIPAL
+   ===================================================== */
 
 .home-main {
   flex: 1;
-  padding: 30px 20px 30px 10px;
-  overflow-y: auto;
-  padding-bottom: 160px; /* Space for bottom player */
+  min-width: 0;
+  min-height: 0;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  /* padding-bottom reserva espaço p/ painel flutuante */
+  padding-top: 16px;
+  padding-right: 20px;
+  padding-bottom: 130px;
+  padding-left: 10px;
 }
 
+/* ---- Header ---- */
 .home-header {
+  flex-shrink: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
-  padding: 4px 0;
+  margin-bottom: 10px;
+  padding-top: 4px;
+  padding-bottom: 4px;
 }
 
 .app-branding {
@@ -64,8 +83,8 @@
 }
 
 .app-logo-img {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   filter: drop-shadow(0 0 8px rgba(255, 42, 95, 0.6));
 }
 
@@ -93,39 +112,61 @@
 }
 
 .avatar {
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
   border-radius: 50%;
   background: var(--primary-color);
   display: flex;
   justify-content: center;
   align-items: center;
   box-shadow: 0 0 10px rgba(255, 42, 95, 0.5);
-  flex-shrink: 0;
+}
+
+/* ---- Category section — ocupa TUDO que sobrou ---- */
+.category-section {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .category-title {
-  font-size: 1.1rem;
+  flex-shrink: 0;
+  font-size: 1rem;
   font-weight: 400;
-  margin-bottom: 20px;
+  margin-bottom: 8px;
   color: rgba(255, 255, 255, 0.8);
   padding-left: 10px;
 }
 
+/* ---- Grid de estações — preenche o restante ---- */
 .stations-grid {
+  flex: 1;
+  min-height: 0;
   display: grid;
+  /* Portrait mobile: 2 cols × 6 rows = 12 cards */
   grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
+  grid-auto-rows: 1fr;
+  gap: 8px;
   padding-left: 10px;
+  overflow: hidden;
 }
 
-/* Bottom mini player -> replaced by controls */
+/* =====================================================
+   PAINEL FLUTUANTE DE CONTROLES (fundo)
+   ===================================================== */
+
 .home-bottom-controls {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 20px 0 30px 0;
+  padding-top: 14px;
+  padding-bottom: 20px;
+  padding-left: 0;
+  padding-right: 0;
   background: linear-gradient(0deg, rgba(6, 6, 19, 1) 0%, rgba(6, 6, 19, 0.9) 70%, transparent 100%);
   display: flex;
   flex-direction: column;
@@ -140,10 +181,193 @@
   border-bottom: 6px solid transparent;
 }
 
-.left-arrow {
-  border-right: 8px solid white;
+.left-arrow  { border-right: 8px solid white; }
+.right-arrow { border-left:  8px solid white; }
+
+/* =====================================================
+   LANDSCAPE MOBILE  (altura ≤ 500px, orientação landscape)
+   12 cards = 4 colunas × 3 linhas
+   ===================================================== */
+
+@media (max-height: 500px) and (orientation: landscape) {
+
+  /* Container vira coluna: topbar + main */
+  .home-container {
+    flex-direction: column;
+  }
+
+  /* Topbar horizontal */
+  .sidebar {
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    flex-shrink: 0;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    padding-left: 16px;
+    padding-right: 16px;
+    gap: 20px;
+    justify-content: flex-start;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .sidebar-tab {
+    writing-mode: horizontal-tb;
+    transform: none;
+    font-size: 0.72rem;
+    letter-spacing: 1px;
+  }
+
+  /* Main compacto */
+  .home-main {
+    padding-top: 6px;
+    padding-right: 12px;
+    padding-bottom: 90px;   /* espaço p/ controles */
+    padding-left: 12px;
+  }
+
+  .home-header {
+    margin-bottom: 4px;
+  }
+
+  /* Esconde título de categoria p/ ganhar espaço */
+  .category-title {
+    display: none;
+  }
+
+  /* 4 colunas × 3 linhas = 12 cards */
+  .stations-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 5px;
+    padding-left: 0;
+  }
+
+  /* Painel de controles compacto */
+  .home-bottom-controls {
+    padding-top: 6px;
+    padding-bottom: 10px;
+    padding-left: 16px;
+    padding-right: 16px;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .home-bottom-controls .np-controls {
+    margin-bottom: 0;
+    gap: 16px;
+  }
+
+  .home-bottom-controls .np-volume {
+    flex: 1;
+    padding-left: 0;
+    padding-right: 0;
+  }
 }
 
-.right-arrow {
-  border-left: 8px solid white;
+/* =====================================================
+   TABLET PORTRAIT (768px+, altura normal)
+   12 cards = 3 colunas × 4 linhas
+   ===================================================== */
+
+@media (min-width: 768px) and (min-height: 501px) {
+
+  .sidebar {
+    width: 55px;
+    gap: 100px;
+  }
+
+  .sidebar-tab {
+    font-size: 0.85rem;
+  }
+
+  .home-main {
+    padding-top: 24px;
+    padding-right: 36px;
+    padding-bottom: 160px;
+    padding-left: 16px;
+  }
+
+  .home-header {
+    margin-bottom: 14px;
+  }
+
+  .app-logo-img {
+    width: 52px;
+    height: 52px;
+  }
+
+  .app-name {
+    font-size: 1.05rem;
+  }
+
+  .category-title {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+  }
+
+  /* 3 colunas × 4 linhas = 12 cards */
+  .stations-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .home-bottom-controls {
+    padding-top: 16px;
+    padding-bottom: 28px;
+  }
+}
+
+/* =====================================================
+   TABLET LANDSCAPE (768px+, altura ≤ 600px)
+   12 cards = 4 colunas × 3 linhas
+   ===================================================== */
+
+@media (min-width: 768px) and (max-height: 600px) {
+
+  .home-main {
+    padding-bottom: 120px;
+  }
+
+  .category-title {
+    display: none;
+  }
+
+  /* 4 colunas × 3 linhas = 12 cards */
+  .stations-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+}
+
+/* =====================================================
+   DESKTOP (1200px+)
+   12 cards = 4 colunas × 3 linhas
+   ===================================================== */
+
+@media (min-width: 1200px) {
+
+  .home-main {
+    padding-top: 28px;
+    padding-right: 56px;
+    padding-bottom: 160px;
+    padding-left: 20px;
+  }
+
+  .app-logo-img {
+    width: 56px;
+    height: 56px;
+  }
+
+  .category-title {
+    font-size: 1.2rem;
+    margin-bottom: 16px;
+  }
+
+  /* 4 colunas × 3 linhas = 12 cards */
+  .stations-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
 }

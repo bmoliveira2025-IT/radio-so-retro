@@ -1,13 +1,14 @@
 .station-card {
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  padding: 12px;
+  border-radius: 14px;
+  padding: 10px 12px;
   display: flex;
   flex-direction: column;
   cursor: pointer;
   transition: all 0.3s ease;
-  min-height: 130px;
+  height: 100%;
+  overflow: hidden;
 }
 
 .station-card.active {
@@ -68,4 +69,51 @@
 
 .station-card.active .mini-waveform {
   opacity: 1;
+}
+
+/* Landscape mobile: cards muito compactos */
+@media (max-height: 500px) and (orientation: landscape) {
+  .station-card {
+    padding: 6px 8px;
+    border-radius: 10px;
+  }
+
+  .card-header {
+    height: 14px;
+    margin-bottom: 2px;
+  }
+
+  .playing-label {
+    font-size: 0.45rem;
+  }
+
+  .freq {
+    font-size: 1.4rem;
+    margin-bottom: -2px;
+    letter-spacing: -0.5px;
+  }
+
+  .name {
+    font-size: 0.6rem;
+  }
+
+  .mini-waveform {
+    height: 12px;
+    margin-top: 4px;
+  }
+}
+
+/* Tablet landscape: cards médios */
+@media (min-width: 768px) and (max-height: 600px) {
+  .station-card {
+    padding: 8px 10px;
+  }
+
+  .freq {
+    font-size: 1.7rem;
+  }
+
+  .name {
+    font-size: 0.68rem;
+  }
 }

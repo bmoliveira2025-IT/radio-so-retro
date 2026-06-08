@@ -4,6 +4,7 @@
   display: flex;
   flex-direction: column;
   padding: 40px;
+  overflow: hidden;
 }
 
 .signup-content {
@@ -77,4 +78,44 @@
   opacity: 0;
   position: absolute;
   pointer-events: none;
+}
+
+/* === Landscape mobile === */
+@media (max-height: 500px) and (orientation: landscape) {
+  .signup-container {
+    padding: 16px 40px;
+  }
+  .signup-content {
+    margin-top: 20px;
+  }
+  .signup-title {
+    font-size: 1.8rem;
+  }
+  .signup-subtitle {
+    margin-bottom: 24px;
+    font-size: 0.95rem;
+  }
+  .logo-container {
+    margin-bottom: 16px;
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* === Tablet e Desktop (768px+) === */
+@media (min-width: 768px) {
+  .signup-container {
+    max-width: 520px;
+    margin: 0 auto;
+    justify-content: center;
+  }
+  .signup-content {
+    margin-top: 0;
+  }
+  .signup-title {
+    font-size: 3rem;
+  }
+  .signup-subtitle {
+    font-size: 1.2rem;
+  }
 }

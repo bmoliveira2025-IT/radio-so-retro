@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { User, SkipBack, SkipForward, Play, Pause, Volume2, ChevronUp } from 'lucide-react';
+import { User, SkipBack, SkipForward, Play, Pause, Volume2, ChevronUp, Music2, Loader2 } from 'lucide-react';
 import type { Station } from '../types';
 import StationCard from './StationCard';
+import { useNowPlaying } from '../hooks/useNowPlaying';
 import './HomeView.css';
 
 interface HomeViewProps {
@@ -34,6 +35,11 @@ const HomeView: React.FC<HomeViewProps> = ({
   onVolumeChange
 }) => {
   const [activeTab, setActiveTab] = useState<'all' | 'favorites'>('all');
+
+  const { title, artist, loading } = useNowPlaying(
+    isPlaying && currentStation ? currentStation.url : null, 
+    currentStation?.name || ''
+  );
 
   const displayedStations = activeTab === 'favorites' 
     ? stations.filter(s => favorites.includes(s.id))
@@ -117,12 +123,27 @@ const HomeView: React.FC<HomeViewProps> = ({
                 <span className="mini-freq">{currentStation.frequency}</span>
               </div>
               <div className="mini-station-text">
-                <span className="mini-station-name">{currentStation.name}</span>
-                <span className="mini-station-status">
-                  {isPlaying ? (
-                    <><span className="live-dot" />Ao vivo</>
-                  ) : 'Pausado'}
-                </span>
+                {loading ? (
+                  <span className="mini-station-name" style={{ color: 'rgba(255,255,255,0.5)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Loader2 size={12} className="np-track-spinner" /> Buscando...
+                  </span>
+                ) : title ? (
+                  <>
+                    <span className="mini-station-name">{title}</span>
+                    <span className="mini-station-status">
+                      {artist || currentStation.name}
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <span className="mini-station-name">{currentStation.name}</span>
+                    <span className="mini-station-status">
+                      {isPlaying ? (
+                        <><span className="live-dot" />Ao vivo</>
+                      ) : 'Pausado'}
+                    </span>
+                  </>
+                )}
               </div>
             </div>
 

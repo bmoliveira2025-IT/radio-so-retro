@@ -84,13 +84,13 @@ export function useNowPlaying(stationUrl: string | null, stationName: string): N
         }
       }
 
-      // --- ICY Metadata via stream-metadata proxy público ---
-      // Proxy: https://stream-meta.netlify.app/api?url=<stream_url>
-      const proxyUrl = `https://stream-meta.netlify.app/api?url=${encodeURIComponent(stationUrl)}`;
-      const metaRes = await fetch(proxyUrl, { signal: AbortSignal.timeout(5000) });
+      // --- Nossa API Vercel (Proxy ICY Metadata) ---
+      // Acessa a edge function /api/meta que extrai corretamente os metadados
+      const proxyUrl = `/api/meta?url=${encodeURIComponent(stationUrl)}`;
+      const metaRes = await fetch(proxyUrl, { signal: AbortSignal.timeout(6000) });
       if (metaRes.ok) {
         const metaData = await metaRes.json();
-        const raw = metaData?.icyTitle ?? metaData?.StreamTitle ?? metaData?.title ?? null;
+        const raw = metaData?.title ?? null;
         if (raw && raw.trim().length > 0) {
           const parsed = parseTrack(raw);
           setMeta({ ...parsed, loading: false });

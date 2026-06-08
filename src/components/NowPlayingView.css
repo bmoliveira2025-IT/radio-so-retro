@@ -274,10 +274,10 @@
 }
 
 /* === Landscape mobile === */
-@media (orientation: landscape) and (max-width: 900px) {
+@media (orientation: landscape) and (max-height: 600px), (orientation: landscape) and (max-width: 900px) {
   .now-playing-container {
     display: grid;
-    grid-template-columns: 1fr 1.2fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     grid-template-rows: auto auto 1fr auto auto;
     grid-template-areas:
       "header header"
@@ -285,31 +285,76 @@
       "info visualizer"
       "track controls"
       "volume volume";
-    padding: 10px 24px 16px;
-    gap: 4px 24px;
+    padding: 2vh 4vw;
+    gap: 1vh 4vw;
+    height: 100dvh;
+    box-sizing: border-box;
     align-items: center;
+    overflow: hidden;
   }
 
-  .np-header { grid-area: header; width: 100%; margin-bottom: 0; }
-  .np-status { grid-area: status; width: 100%; justify-content: flex-start; margin-bottom: 0; }
-  .np-station-info { grid-area: info; width: 100%; text-align: left; margin-bottom: 0; }
-  .np-visualizer { grid-area: visualizer; width: 100%; height: 110px; margin-bottom: 0; align-items: flex-end; }
-  .np-track-card { grid-area: track; width: 100%; margin-bottom: 0; padding: 10px 14px; }
-  .np-controls { grid-area: controls; width: 100%; margin-bottom: 0; gap: 24px; justify-content: center; }
-  .np-volume { grid-area: volume; width: 100%; padding: 0 40px; margin-top: 4px; }
+  .np-header { grid-area: header; width: 100%; margin-bottom: 0; padding: 0; min-width: 0; }
+  .np-status { grid-area: status; width: 100%; justify-content: flex-start; margin-bottom: 0; min-width: 0; }
+  .np-station-info { grid-area: info; width: 100%; text-align: left; margin-bottom: 0; min-width: 0; }
+  .np-visualizer { 
+    grid-area: visualizer; 
+    width: 100%; 
+    height: clamp(40px, 15vh, 100px); 
+    margin-bottom: 0; 
+    align-items: center; 
+    justify-content: center; 
+    min-width: 0;
+    overflow: hidden; /* Prevent 40 wave bars from breaking the grid on tiny phones */
+  }
+  .np-track-card { 
+    grid-area: track; 
+    width: 100%; 
+    margin-bottom: 0; 
+    padding: 1vh 2vw; 
+    min-width: 0;
+  }
+  .np-controls { 
+    grid-area: controls; 
+    width: 100%; 
+    margin-bottom: 0; 
+    gap: 3vw; 
+    justify-content: center; 
+    min-width: 0;
+  }
+  .np-volume { 
+    grid-area: volume; 
+    width: 100%; 
+    padding: 0 4vw; 
+    margin-top: 0; 
+    min-width: 0;
+  }
 
   .np-freq {
-    font-size: 3.2rem;
+    font-size: clamp(2rem, 12vh, 4rem);
+    line-height: 1;
+  }
+  
+  .np-station-info h2 {
+    font-size: clamp(0.9rem, 4vh, 1.2rem);
+    margin-top: 1vh;
   }
   
   .np-btn-play {
-    width: 56px;
-    height: 56px;
+    width: clamp(40px, 12vh, 64px);
+    height: clamp(40px, 12vh, 64px);
   }
   
   .np-btn-secondary {
-    width: 40px;
-    height: 40px;
+    width: clamp(32px, 8vh, 48px);
+    height: clamp(32px, 8vh, 48px);
+  }
+  
+  .np-track-title {
+    font-size: clamp(0.75rem, 3.5vh, 1rem);
+  }
+  
+  .np-track-artist {
+    font-size: clamp(0.65rem, 3vh, 0.85rem);
   }
 }
 

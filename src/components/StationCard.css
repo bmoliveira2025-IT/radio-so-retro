@@ -72,7 +72,7 @@
 }
 
 /* Landscape mobile: cards muito compactos */
-@media (max-height: 500px) and (orientation: landscape) {
+@media (orientation: landscape) and (max-width: 900px) {
   .station-card {
     padding: 6px 8px;
     border-radius: 10px;

@@ -148,6 +148,7 @@ const NowPlayingView: React.FC<NowPlayingViewProps> = ({
           value={volume}
           onChange={(e) => onVolumeChange(Number(e.target.value))}
           className="volume-slider"
+          style={{ '--vol': `${volume}%` } as React.CSSProperties}
         />
         <span className="volume-text">{volume}%</span>
       </div>

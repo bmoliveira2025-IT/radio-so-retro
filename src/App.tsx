@@ -89,6 +89,7 @@ function App() {
 
   return (
     <div className="app-container">
+      <InstallPrompt />
       <div className="content-wrapper">
         <audio ref={audioRef} src={currentStation?.url} />
         

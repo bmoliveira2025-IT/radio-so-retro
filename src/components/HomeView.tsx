@@ -30,26 +30,6 @@ const HomeView: React.FC<HomeViewProps> = ({
   onToggleFavorite
 }) => {
   const [activeTab, setActiveTab] = useState<'all' | 'favorites' | 'saved'>('all');
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
-
-  React.useEffect(() => {
-    const handleBeforeInstallPrompt = (e: any) => {
-      e.preventDefault();
-      setDeferredPrompt(e);
-    };
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-  }, []);
-
-  const handleInstallClick = async () => {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') {
-        setDeferredPrompt(null);
-      }
-    }
-  };
 
   const displayedStations = activeTab === 'favorites' 
     ? stations.filter(s => favorites.includes(s.id))
@@ -87,23 +67,6 @@ const HomeView: React.FC<HomeViewProps> = ({
             <span className="app-name">Só Retrô</span>
           </div>
           <div className="user-greeting">
-            {deferredPrompt && (
-              <button 
-                onClick={handleInstallClick}
-                style={{
-                  background: 'var(--primary-color)',
-                  color: 'white',
-                  border: 'none',
-                  padding: '6px 12px',
-                  borderRadius: '12px',
-                  fontSize: '0.8rem',
-                  fontWeight: 'bold',
-                  cursor: 'pointer'
-                }}
-              >
-                Instalar App
-              </button>
-            )}
             <h2>{getGreeting()}</h2>
             <div className="avatar">
               <User size={20} color="#fff" />

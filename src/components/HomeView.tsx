@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, SkipBack, SkipForward } from 'lucide-react';
+import { User, SkipBack, SkipForward, Play, Pause, Volume2, ChevronUp } from 'lucide-react';
 import type { Station } from '../types';
 import StationCard from './StationCard';
 import './HomeView.css';
@@ -110,41 +110,55 @@ const HomeView: React.FC<HomeViewProps> = ({
 
       {currentStation && (
         <div className="home-bottom-controls" onClick={onNavigateNowPlaying} style={{ cursor: 'pointer' }}>
-          <div className="np-controls" style={{ marginBottom: '20px' }}>
-            <button className="control-btn secondary" onClick={(e) => { e.stopPropagation(); onPrevious(); }}>
-              <SkipBack size={20} fill="#fff" />
-            </button>
-
-            <div className="hexagon-wrapper" onClick={(e) => {
-              e.stopPropagation();
-              onTogglePlay();
-            }}>
-              {isPlaying && <div className="hexagon-outline"></div>}
-              <div className="hexagon">
-                {isPlaying ? (
-                  <div className="pause-icon" />
-                ) : (
-                  <div className="play-triangle" />
-                )}
+          <div className="mini-player">
+            {/* Station info */}
+            <div className="mini-player-info">
+              <div className="mini-station-badge">
+                <span className="mini-freq">{currentStation.frequency}</span>
+              </div>
+              <div className="mini-station-text">
+                <span className="mini-station-name">{currentStation.name}</span>
+                <span className="mini-station-status">
+                  {isPlaying ? (
+                    <><span className="live-dot" />Ao vivo</>
+                  ) : 'Pausado'}
+                </span>
               </div>
             </div>
 
-            <button className="control-btn secondary" onClick={(e) => { e.stopPropagation(); onNext(); }}>
-              <SkipForward size={20} fill="#fff" />
-            </button>
-          </div>
+            {/* Controls */}
+            <div className="mini-controls" onClick={(e) => e.stopPropagation()}>
+              <button className="mini-btn" onClick={(e) => { e.stopPropagation(); onPrevious(); }} title="Anterior">
+                <SkipBack size={18} />
+              </button>
 
-          <div className="np-volume" onClick={(e) => e.stopPropagation()}>
-            <span className="volume-icon"></span>
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={volume}
-              onChange={(e) => onVolumeChange(Number(e.target.value))}
-              className="volume-slider"
-            />
-            <span className="volume-text">{volume}%</span>
+              <button className="mini-btn play-btn" onClick={(e) => { e.stopPropagation(); onTogglePlay(); }} title={isPlaying ? 'Pausar' : 'Tocar'}>
+                {isPlaying ? <Pause size={20} /> : <Play size={20} />}
+              </button>
+
+              <button className="mini-btn" onClick={(e) => { e.stopPropagation(); onNext(); }} title="Próxima">
+                <SkipForward size={18} />
+              </button>
+            </div>
+
+            {/* Volume */}
+            <div className="mini-volume" onClick={(e) => e.stopPropagation()}>
+              <Volume2 size={15} className="mini-vol-icon" />
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={volume}
+                onChange={(e) => onVolumeChange(Number(e.target.value))}
+                className="volume-slider"
+                style={{ '--vol': `${volume}%` } as React.CSSProperties}
+              />
+            </div>
+
+            {/* Expand arrow */}
+            <div className="mini-expand">
+              <ChevronUp size={16} className="mini-chevron" />
+            </div>
           </div>
         </div>
       )}

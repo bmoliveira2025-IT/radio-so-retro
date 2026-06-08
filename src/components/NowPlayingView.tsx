@@ -1,6 +1,7 @@
-import React from 'react';
-import { ArrowLeft, User, Heart, SkipBack, SkipForward, Volume2 } from 'lucide-react';
+import React, { useRef, useEffect, useState } from 'react';
+import { ArrowLeft, User, Heart, SkipBack, SkipForward, Volume2, Play, Pause, Music2, Loader2 } from 'lucide-react';
 import type { Station } from '../types';
+import { useNowPlaying } from '../hooks/useNowPlaying';
 import './NowPlayingView.css';
 
 interface NowPlayingViewProps {
@@ -16,8 +17,8 @@ interface NowPlayingViewProps {
   onToggleFavorite: (id: string) => void;
 }
 
-const NowPlayingView: React.FC<NowPlayingViewProps> = ({ 
-  station, 
+const NowPlayingView: React.FC<NowPlayingViewProps> = ({
+  station,
   onBack,
   isPlaying,
   onTogglePlay,
@@ -28,12 +29,21 @@ const NowPlayingView: React.FC<NowPlayingViewProps> = ({
   favorites,
   onToggleFavorite
 }) => {
-  // Generate a cool sine wave pattern for the heights
-  const waveHeights = Array.from({ length: 60 }, (_, i) => {
-    const base = Math.sin(i * 0.2) * 50 + 60;
-    const noise = Math.random() * 20;
-    return base + noise;
-  });
+  // Stable wave heights (generated once per station)
+  const waveHeightsRef = useRef<number[]>([]);
+  useEffect(() => {
+    waveHeightsRef.current = Array.from({ length: 60 }, (_, i) => {
+      const base = Math.sin(i * 0.2) * 50 + 60;
+      const noise = Math.random() * 20;
+      return base + noise;
+    });
+  }, [station.id]);
+
+  // Re-render trigger for waveHeights initialization
+  const [, forceUpdate] = useState(0);
+  useEffect(() => { forceUpdate(n => n + 1); }, [station.id]);
+
+  const { title, artist, loading } = useNowPlaying(isPlaying ? station.url : null, station.name);
 
   const isFavorite = favorites.includes(station.id);
 
@@ -44,6 +54,10 @@ const NowPlayingView: React.FC<NowPlayingViewProps> = ({
     if (hour >= 12 && hour < 18) return 'Boa tarde!';
     return 'Boa noite!';
   };
+
+  const waveHeights = waveHeightsRef.current.length > 0
+    ? waveHeightsRef.current
+    : Array.from({ length: 60 }, (_, i) => Math.sin(i * 0.2) * 50 + 60);
 
   return (
     <div className="now-playing-container">
@@ -61,8 +75,8 @@ const NowPlayingView: React.FC<NowPlayingViewProps> = ({
 
       <div className="np-status">
         <span>Tocando agora</span>
-        <button 
-          onClick={() => onToggleFavorite(station.id)} 
+        <button
+          onClick={() => onToggleFavorite(station.id)}
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '5px' }}
         >
           <Heart size={20} fill={isFavorite ? "#ff2a5f" : "transparent"} color={isFavorite ? "#ff2a5f" : "rgba(255,255,255,0.5)"} />
@@ -76,54 +90,62 @@ const NowPlayingView: React.FC<NowPlayingViewProps> = ({
 
       <div className="np-visualizer">
         {waveHeights.map((height, i) => (
-          <div 
-            key={i} 
-            className="wave-bar" 
-            style={{ 
+          <div
+            key={i}
+            className="wave-bar"
+            style={{
               height: isPlaying ? `${height}px` : '10px',
-              animationDuration: `${Math.random() * 1 + 0.5}s`,
-              animationDelay: `${i * 0.05}s`
-            }} 
+              animationDuration: `${(i % 7) * 0.15 + 0.5}s`,
+              animationDelay: `${i * 0.04}s`
+            }}
           />
         ))}
       </div>
 
-      <div className="np-chart-info">
-        <h3>Top 20</h3>
-        <p>Melhor Música</p>
+      {/* Now playing track info */}
+      <div className="np-track-card">
+        <div className="np-track-icon">
+          {loading ? (
+            <Loader2 size={18} className="np-track-spinner" />
+          ) : (
+            <Music2 size={18} />
+          )}
+        </div>
+        <div className="np-track-text">
+          {loading ? (
+            <span className="np-track-title muted">Buscando música...</span>
+          ) : title ? (
+            <>
+              <span className="np-track-title marquee">{title}</span>
+              {artist && <span className="np-track-artist">{artist}</span>}
+            </>
+          ) : (
+            <span className="np-track-title muted">Ao vivo · {station.name}</span>
+          )}
+        </div>
       </div>
 
       <div className="np-controls">
-        <button className="control-btn secondary" onClick={(e) => { e.stopPropagation(); onPrevious(); }}>
-          <SkipBack size={20} fill="#fff" />
+        <button className="np-btn np-btn-secondary" onClick={onPrevious} title="Anterior">
+          <SkipBack size={22} />
         </button>
-        
-        <div className="hexagon-wrapper" onClick={(e) => {
-          e.stopPropagation();
-          onTogglePlay();
-        }}>
-          {isPlaying && <div className="hexagon-outline"></div>}
-          <div className="hexagon">
-            {isPlaying ? (
-              <div className="pause-icon" />
-            ) : (
-              <div className="play-triangle" />
-            )}
-          </div>
-        </div>
 
-        <button className="control-btn secondary" onClick={(e) => { e.stopPropagation(); onNext(); }}>
-          <SkipForward size={20} fill="#fff" />
+        <button className="np-btn np-btn-play" onClick={onTogglePlay} title={isPlaying ? 'Pausar' : 'Tocar'}>
+          {isPlaying ? <Pause size={28} /> : <Play size={28} />}
+        </button>
+
+        <button className="np-btn np-btn-secondary" onClick={onNext} title="Próxima">
+          <SkipForward size={22} />
         </button>
       </div>
 
       <div className="np-volume">
         <Volume2 size={18} color="rgba(255,255,255,0.5)" />
-        <input 
-          type="range" 
-          min="0" 
-          max="100" 
-          value={volume} 
+        <input
+          type="range"
+          min="0"
+          max="100"
+          value={volume}
           onChange={(e) => onVolumeChange(Number(e.target.value))}
           className="volume-slider"
         />

@@ -29,7 +29,7 @@ const HomeView: React.FC<HomeViewProps> = ({
   favorites,
   onToggleFavorite
 }) => {
-  const [activeTab, setActiveTab] = useState<'all' | 'favorites' | 'saved'>('all');
+  const [activeTab, setActiveTab] = useState<'all' | 'favorites'>('all');
 
   const displayedStations = activeTab === 'favorites' 
     ? stations.filter(s => favorites.includes(s.id))
@@ -46,10 +46,6 @@ const HomeView: React.FC<HomeViewProps> = ({
   return (
     <div className="home-container">
       <div className="sidebar">
-        <div 
-          className={`sidebar-tab ${activeTab === 'saved' ? 'active' : ''}`}
-          onClick={() => setActiveTab('saved')}
-        >Salvas</div>
         <div 
           className={`sidebar-tab ${activeTab === 'favorites' ? 'active' : ''}`}
           onClick={() => setActiveTab('favorites')}
@@ -76,7 +72,7 @@ const HomeView: React.FC<HomeViewProps> = ({
         
         <div className="category-section">
           <h3 className="category-title">
-            {activeTab === 'all' ? 'Populares' : activeTab === 'favorites' ? 'Rádios Favoritas' : 'Rádios Salvas'}
+            {activeTab === 'all' ? 'Populares' : 'Rádios Favoritas'}
           </h3>
           
           <div className="stations-grid">

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, SkipBack, SkipForward, Play, Pause, Volume2, ChevronUp, Music2, Loader2 } from 'lucide-react';
+import { User, SkipBack, SkipForward, Play, Pause, Volume2, ChevronUp, Loader2 } from 'lucide-react';
 import type { Station } from '../types';
 import StationCard from './StationCard';
 import { useNowPlaying } from '../hooks/useNowPlaying';

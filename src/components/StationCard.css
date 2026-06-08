@@ -1,0 +1,71 @@
+.station-card {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-height: 130px;
+}
+
+.station-card.active {
+  background: #ff2a5f;
+  border-color: #ff2a5f;
+  box-shadow: 0 10px 20px rgba(255, 42, 95, 0.3);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 5px;
+  height: 20px;
+}
+
+.playing-label {
+  font-size: 0.55rem;
+  font-weight: 500;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.card-content {
+  text-align: center;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.freq {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: -5px;
+  letter-spacing: -1px;
+}
+
+.name {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 400;
+}
+
+.station-card.active .name {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.mini-waveform {
+  width: 100%;
+  height: 20px;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  opacity: 0.8;
+}
+
+.station-card.active .mini-waveform {
+  opacity: 1;
+}

@@ -1,0 +1,186 @@
+.now-playing-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 30px 20px;
+  position: relative;
+}
+
+.np-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.user-greeting {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.user-greeting h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.np-status {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+
+.np-status span {
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.np-station-info {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.np-freq {
+  font-size: 5rem;
+  font-weight: 800;
+  letter-spacing: -2px;
+  margin-bottom: -5px;
+  text-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
+}
+
+.np-name {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+}
+
+.np-visualizer {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end; /* Align bars to bottom */
+  gap: 2px;
+  margin-bottom: 20px;
+  position: relative;
+  height: 200px;
+  padding: 0 10px;
+}
+
+.wave-bar {
+  width: 4px;
+  background: var(--primary-color);
+  transition: height 0.1s ease;
+  z-index: 2;
+  -webkit-mask-image: repeating-linear-gradient(to bottom, black 0px, black 4px, transparent 4px, transparent 8px);
+  mask-image: repeating-linear-gradient(to bottom, black 0px, black 4px, transparent 4px, transparent 8px);
+}
+
+.now-playing-container .wave-bar {
+  animation: np-wave infinite alternate ease-in-out;
+}
+
+@keyframes np-wave {
+  0% { transform: scaleY(0.8); }
+  100% { transform: scaleY(1.2); }
+}
+
+.np-chart-info {
+  text-align: right;
+  margin-bottom: 30px;
+  padding-right: 20px;
+}
+
+.np-chart-info h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.np-chart-info p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.np-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.control-btn {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.control-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Pause icon and play triangle inside hexagon */
+.play-triangle {
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 16px solid white;
+  margin-left: 5px;
+}
+
+.pause-icon {
+  width: 14px;
+  height: 18px;
+  border-left: 4px solid white;
+  border-right: 4px solid white;
+}
+
+.np-volume {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 0 20px;
+}
+
+.volume-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  outline: none;
+}
+
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent-cyan);
+  cursor: pointer;
+  box-shadow: 0 0 10px var(--accent-cyan);
+}
+
+.volume-text {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  min-width: 30px;
+}

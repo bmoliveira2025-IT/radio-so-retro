@@ -63,15 +63,15 @@
 }
 
 .app-logo-img {
-  width: 36px;
-  height: 36px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   object-fit: cover;
   box-shadow: 0 0 10px rgba(255, 42, 95, 0.4);
 }
 
 .app-name {
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 800;
   color: white;
   letter-spacing: -0.5px;
@@ -81,11 +81,11 @@
 .user-greeting {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
 
 .user-greeting h2 {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.7);
   white-space: nowrap;
@@ -93,8 +93,8 @@
 }
 
 .avatar {
-  width: 36px;
-  height: 36px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   background: var(--primary-color);
   display: flex;

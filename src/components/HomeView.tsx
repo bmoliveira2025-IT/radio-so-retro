@@ -69,7 +69,7 @@ const HomeView: React.FC<HomeViewProps> = ({
           <div className="user-greeting">
             <h2>{getGreeting()}</h2>
             <div className="avatar">
-              <User size={20} color="#fff" />
+              <User size={16} color="#fff" />
             </div>
           </div>
         </header>

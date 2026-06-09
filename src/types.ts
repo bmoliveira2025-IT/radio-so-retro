@@ -6,3 +6,5 @@ export interface Station {
   color: string;
   logo?: string;
 }
+
+export type PlayerStatus = 'idle' | 'connecting' | 'live' | 'error' | 'skipping';

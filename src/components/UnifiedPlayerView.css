@@ -408,6 +408,41 @@
   letter-spacing: 0.6px;
 }
 
+.mp-player-status {
+  margin-top: 5px;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.mp-player-status--connecting {
+  color: #B66A00;
+}
+
+.mp-player-status--live {
+  color: #168A4A;
+}
+
+.mp-player-status--error {
+  color: #C2382B;
+}
+
+.mp-player-status--skipping {
+  color: #C2382B;
+}
+
+.mp-now-playing {
+  margin-top: 6px;
+  color: var(--orange);
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .mp-info-actions {
   display: flex;
   gap: 4px;
@@ -614,6 +649,14 @@
   font-weight: 800;
   color: var(--text);
   padding: 0 18px 10px;
+  flex-shrink: 0;
+}
+
+.mp-list-refresh {
+  margin: -4px 18px 10px;
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  font-weight: 600;
   flex-shrink: 0;
 }
 
@@ -1398,4 +1441,3 @@
   from { opacity: 0; transform: translateY(2px); }
   to { opacity: 1; transform: translateY(0); }
 }
-

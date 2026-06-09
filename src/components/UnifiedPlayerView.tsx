@@ -4,7 +4,8 @@ import {
   SkipBack, SkipForward, Pause, Play, Repeat, List, Search, Radio,
   Volume2, Volume1, Star, X
 } from 'lucide-react';
-import type { Station } from '../types';
+import type { PlayerStatus, Station } from '../types';
+import { useNowPlaying } from '../hooks/useNowPlaying';
 import './UnifiedPlayerView.css';
 
 interface UnifiedPlayerViewProps {
@@ -15,6 +16,8 @@ interface UnifiedPlayerViewProps {
   onSelectStation: (station: Station) => void;
   volume: number;
   onVolumeChange: (volume: number) => void;
+  isRefreshingStations?: boolean;
+  playerStatus?: PlayerStatus;
 }
 
 // ─── Favorites persistence ───────────────────────────────────────────────────
@@ -111,6 +114,8 @@ export default function UnifiedPlayerView({
   onSelectStation,
   volume,
   onVolumeChange,
+  isRefreshingStations = false,
+  playerStatus = 'idle',
 }: UnifiedPlayerViewProps) {
   const [view, setView] = useState<'player' | 'list' | 'favorites'>('list');
   const [favorites, setFavorites] = useState<Station[]>(loadFavorites);
@@ -119,6 +124,15 @@ export default function UnifiedPlayerView({
   const [isSearching, setIsSearching] = useState(false);
   const waveHeights = useWaveHeights(36);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const nowPlaying = useNowPlaying(currentStation?.url ?? null, currentStation?.name ?? '');
+
+  const playerStatusLabel: Record<PlayerStatus, string> = {
+    idle: 'Pronto para tocar',
+    connecting: 'Conectando...',
+    live: 'Ao vivo',
+    error: 'Erro na rádio',
+    skipping: 'Tentando próxima...'
+  };
 
   if (!currentStation) return null;
 
@@ -211,7 +225,7 @@ export default function UnifiedPlayerView({
         <button className="mp-icon-btn" aria-label="Estações" onClick={() => setView('list')}>
           <ChevronLeft size={22} strokeWidth={2.5} />
         </button>
-        <span className="mp-header-title">Now Playing</span>
+        <span className="mp-header-title">Tocando agora</span>
         <button className="mp-icon-btn" aria-label="Opções" onClick={() => setView('list')}>
           <MoreVertical size={22} strokeWidth={2.5} />
         </button>
@@ -229,6 +243,18 @@ export default function UnifiedPlayerView({
             <div className="mp-info-text">
               <h2 className="mp-station-name">{currentStation.name}</h2>
               <p className="mp-station-freq">{currentStation.frequency || 'Live Radio'}</p>
+              <p className={`mp-player-status mp-player-status--${playerStatus}`} aria-live="polite">
+                {playerStatusLabel[playerStatus]}
+              </p>
+              {(nowPlaying.loading || nowPlaying.title) && (
+                <p className="mp-now-playing" aria-live="polite">
+                  {nowPlaying.loading
+                    ? 'Buscando música atual...'
+                    : nowPlaying.artist
+                      ? `${nowPlaying.artist} - ${nowPlaying.title}`
+                      : nowPlaying.title}
+                </p>
+              )}
             </div>
             <div className="mp-info-actions">
               {/* Heart = save to Favorites (persistent) */}
@@ -361,8 +387,13 @@ export default function UnifiedPlayerView({
       )}
 
       <div className="mp-list-section-title">
-        {searchQuery ? `Resultados (${filteredStations.length})` : 'Hot Stations'}
+        {searchQuery ? `Resultados (${filteredStations.length})` : 'Rádios em destaque'}
       </div>
+      {isRefreshingStations && !searchQuery && (
+        <div className="mp-list-refresh" role="status" aria-live="polite">
+          Atualizando rádios...
+        </div>
+      )}
       <div className="mp-station-list">
         {filteredStations.length > 0 ? (
           filteredStations.map(station => <StationItem key={station.id} station={station} />)

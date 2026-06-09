@@ -151,68 +151,187 @@
   100% { transform: scale(0.92); opacity: 0.4; }
 }
 
-/* Initials */
-.sta-initials {
-  font-family: 'Inter', 'Outfit', sans-serif;
-  font-weight: 900;
-  color: rgba(255,255,255,0.95);
-  text-transform: uppercase;
-  letter-spacing: 2px;
+/* ══════════════════════════════════════════
+   RETRO VINYL RECORD
+══════════════════════════════════════════ */
+.sta-vinyl {
   position: relative;
-  z-index: 2;
-  text-shadow: 0 2px 12px rgba(0,0,0,0.25);
-  line-height: 1;
-  user-select: none;
-}
-
-.sta-artwork--large .sta-initials  { font-size: clamp(2.5rem, 12vw, 5rem); }
-.sta-artwork--small .sta-initials  { font-size: 0.9rem; letter-spacing: 0.5px; }
-
-/* Equalizer bars */
-.sta-eq {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  width: 75%;
+  height: 75%;
+  border-radius: 50%;
+  background: #111;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 0 4px #222;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
-  gap: 4px;
-  padding: 0 16px 14px;
   z-index: 3;
-  opacity: 0;
-  transition: opacity 0.3s;
 }
 
-.sta-artwork--small .sta-eq {
-  gap: 2px;
-  padding: 0 6px 5px;
+.sta-artwork--small .sta-vinyl {
+  width: 85%;
+  height: 85%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4), inset 0 0 0 1px #222;
 }
 
-.sta-eq.playing {
-  opacity: 1;
+/* Grooves pattern */
+.sta-vinyl-grooves {
+  position: absolute;
+  inset: 5%;
+  border-radius: 50%;
+  background: 
+    repeating-radial-gradient(
+      #111 0, 
+      #111 2px, 
+      #1a1a1a 3px, 
+      #111 4px
+    );
+  opacity: 0.8;
 }
 
-.sta-eq-bar {
-  flex: 1;
-  max-width: 7px;
-  background: rgba(255,255,255,0.85);
-  border-radius: 3px 3px 0 0;
-  height: 6px;
-  animation: eq-dance 0.8s ease-in-out infinite alternate;
-  box-shadow: 0 0 6px rgba(255,255,255,0.5);
+.sta-artwork--small .sta-vinyl-grooves {
+  background: 
+    repeating-radial-gradient(
+      #111 0, 
+      #111 1px, 
+      #1a1a1a 1.5px, 
+      #111 2px
+    );
 }
 
-.sta-artwork--small .sta-eq-bar {
-  max-width: 4px;
+/* Center label */
+.sta-vinyl-label {
+  position: relative;
+  width: 40%;
+  height: 40%;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 0 2px #111;
+  z-index: 2;
 }
 
-@keyframes eq-dance {
-  0%   { height: 4px; }
-  25%  { height: 22px; }
-  50%  { height: 10px; }
-  75%  { height: 30px; }
-  100% { height: 8px; }
+.sta-artwork--small .sta-vinyl-label {
+  width: 45%;
+  height: 45%;
+}
+
+/* Center hole */
+.sta-vinyl-label::after {
+  content: '';
+  position: absolute;
+  width: 12%;
+  height: 12%;
+  background: var(--bg);
+  border-radius: 50%;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);
+}
+
+/* Initials on the label */
+.sta-vinyl-initials {
+  font-family: 'Inter', sans-serif;
+  font-weight: 900;
+  color: #fff;
+  font-size: clamp(1rem, 3.5vw, 2.2rem);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  margin-bottom: 15%; /* Push above the center hole */
+}
+
+.sta-artwork--small .sta-vinyl-initials {
+  font-size: 0.5rem;
+  margin-bottom: 25%;
+}
+
+/* Vinyl Shine (static gradient that stays put while vinyl spins) */
+.sta-vinyl-shine {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 45deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0.15) 15%,
+    rgba(255,255,255,0) 30%,
+    rgba(255,255,255,0) 50%,
+    rgba(255,255,255,0.15) 65%,
+    rgba(255,255,255,0) 80%
+  );
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Animation */
+.sta-vinyl.spinning {
+  animation: vinyl-spin 4s linear infinite;
+}
+
+@keyframes vinyl-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ══════════════════════════════════════════
+   VINYL TONEARM (AGULHA)
+══════════════════════════════════════════ */
+.sta-vinyl-arm {
+  position: absolute;
+  top: 8%;
+  right: 8%;
+  width: 15%;
+  height: 45%;
+  transform-origin: top center;
+  transform: rotate(-35deg); /* Paused/Off position */
+  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 4;
+}
+
+.sta-vinyl-arm.playing {
+  transform: rotate(18deg); /* Playing/On record position */
+}
+
+/* Base pivot */
+.sta-vinyl-arm-base {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 24px;
+  background: #d4d4d4;
+  border-radius: 50%;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.4), inset 0 2px 4px #fff;
+  z-index: 2;
+}
+
+/* Rod (haste) */
+.sta-vinyl-arm-rod {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 100%;
+  background: linear-gradient(to right, #999, #f4f4f4, #888);
+  border-radius: 3px;
+  box-shadow: 4px 2px 8px rgba(0,0,0,0.5);
+}
+
+/* Headshell (cabeça/agulha) */
+.sta-vinyl-arm-head {
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 26px;
+  background: #222;
+  border-radius: 3px;
+  box-shadow: 3px 3px 6px rgba(0,0,0,0.5), inset 0 2px 2px #555;
+}
+
+/* Hide tonearm in small thumbnails to keep it clean */
+.sta-artwork--small .sta-vinyl-arm {
+  display: none;
 }
 
 /* Make the large artwork featured-art inside banner */
@@ -534,6 +653,28 @@
   letter-spacing: 0.4px;
 }
 
+.mp-item-fav-btn {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 4px;
+  transition: transform 0.12s;
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+}
+.mp-item-fav-btn:hover { transform: scale(1.1); }
+.mp-item-fav-btn:active { transform: scale(0.9); }
+.mp-item-fav-btn.saved {
+  background: rgba(255, 69, 0, 0.08);
+}
+
 .mp-item-play-btn {
   width: 36px;
   height: 36px;
@@ -556,6 +697,73 @@
   background: #CC3700;
   box-shadow: 0 4px 12px rgba(204,55,0,0.4);
 }
+
+/* ══════════════════════════════════════════
+   TOAST NOTIFICATION
+══════════════════════════════════════════ */
+.mp-toast {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translate(-50%, -20px);
+  background: rgba(30, 30, 30, 0.95);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  z-index: 100;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.mp-toast.mp-toast--visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* ══════════════════════════════════════════
+   FAVORITES EMPTY STATE
+══════════════════════════════════════════ */
+.mp-empty-favs {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 32px 40px;
+  text-align: center;
+}
+
+.mp-empty-favs-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text);
+  margin: 16px 0 6px;
+}
+
+.mp-empty-favs-sub {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin-bottom: 24px;
+}
+
+.mp-empty-favs-btn {
+  background: #1A1A1A;
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  padding: 12px 24px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s, background 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.mp-empty-favs-btn:active { transform: scale(0.96); }
 
 /* ══════════════════════════════════════════
    BOTTOM NAV (shared mobile/tablet portrait)
@@ -596,6 +804,60 @@
 .mp-nav-btn.active {
   color: var(--orange);
   background: rgba(255,69,0,0.07);
+}
+
+.mp-nav-fav-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mp-fav-badge {
+  position: absolute;
+  top: -4px;
+  right: -8px;
+  background: var(--orange);
+  color: #fff;
+  font-size: 0.55rem;
+  font-weight: 800;
+  padding: 1px 4px;
+  border-radius: 8px;
+  border: 2px solid var(--white);
+  line-height: 1;
+}
+
+/* Desktop tabs inside list panel */
+.mp-desktop-tabs {
+  display: flex;
+  padding: 12px 14px 4px;
+  gap: 8px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+
+.mp-desktop-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #BBBBBB;
+  padding: 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.mp-desktop-tab:hover { background: #f5f5f5; color: #888; }
+.mp-desktop-tab.active {
+  background: rgba(255, 69, 0, 0.08);
+  color: var(--orange);
 }
 
 /* ══════════════════════════════════════════

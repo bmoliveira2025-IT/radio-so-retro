@@ -1,8 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import {
-  ChevronLeft, MoreVertical, Heart, Plus, Shuffle,
+  ChevronLeft, MoreVertical, Heart, Shuffle,
   SkipBack, SkipForward, Pause, Play, Repeat, List, Search, Radio,
-  Volume2, Volume1
+  Volume2, Volume1, Star
 } from 'lucide-react';
 import type { Station } from '../types';
 import './UnifiedPlayerView.css';
@@ -17,6 +17,23 @@ interface UnifiedPlayerViewProps {
   onVolumeChange: (volume: number) => void;
 }
 
+// ─── Favorites persistence ───────────────────────────────────────────────────
+const FAV_KEY = 'so-retro-favorites';
+
+function loadFavorites(): Station[] {
+  try {
+    const raw = localStorage.getItem(FAV_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveFavorites(favs: Station[]) {
+  localStorage.setItem(FAV_KEY, JSON.stringify(favs));
+}
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
 function useWaveHeights(count: number) {
   const ref = useRef<number[]>([]);
   if (ref.current.length === 0) {
@@ -25,14 +42,22 @@ function useWaveHeights(count: number) {
   return ref.current;
 }
 
-/** Generate 2-letter initials from station name */
 function getInitials(name: string): string {
   const words = name.trim().split(/\s+/);
   if (words.length === 1) return words[0].substring(0, 2).toUpperCase();
   return (words[0][0] + words[1][0]).toUpperCase();
 }
 
-/** CSS-only animated artwork — no external images, no CORS */
+// ─── Toast notification ───────────────────────────────────────────────────────
+function Toast({ message, visible }: { message: string; visible: boolean }) {
+  return (
+    <div className={`mp-toast ${visible ? 'mp-toast--visible' : ''}`} role="status" aria-live="polite">
+      {message}
+    </div>
+  );
+}
+
+// ─── Station Artwork ──────────────────────────────────────────────────────────
 function StationArtwork({ station, isPlaying, size = 'large' }: {
   station: Station;
   isPlaying: boolean;
@@ -40,39 +65,36 @@ function StationArtwork({ station, isPlaying, size = 'large' }: {
 }) {
   const color = station.color || '#FF4500';
   const initials = getInitials(station.name);
-  const barCount = size === 'large' ? 5 : 3;
+
 
   return (
     <div
       className={`sta-artwork sta-artwork--${size}`}
-      style={{
-        background: `linear-gradient(145deg, ${color} 0%, ${color}cc 50%, ${color}88 100%)`
-      }}
+      style={{ background: `linear-gradient(145deg, ${color} 0%, ${color}cc 50%, ${color}88 100%)` }}
       aria-label={station.name}
     >
-      {/* Subtle animated rings */}
-      <div className={`sta-ring sta-ring-1 ${isPlaying ? 'pulsing' : ''}`}
-        style={{ borderColor: `${color}44` }} />
-      <div className={`sta-ring sta-ring-2 ${isPlaying ? 'pulsing' : ''}`}
-        style={{ borderColor: `${color}22` }} />
+      <div className={`sta-ring sta-ring-1 ${isPlaying ? 'pulsing' : ''}`} style={{ borderColor: `${color}44` }} />
+      <div className={`sta-ring sta-ring-2 ${isPlaying ? 'pulsing' : ''}`} style={{ borderColor: `${color}22` }} />
+      {/* Retro Vinyl Record */}
+      <div className={`sta-vinyl ${isPlaying ? 'spinning' : ''}`}>
+        <div className="sta-vinyl-grooves" />
+        <div className="sta-vinyl-label" style={{ background: color }}>
+          <span className="sta-vinyl-initials">{initials}</span>
+        </div>
+        <div className="sta-vinyl-shine" />
+      </div>
 
-      {/* Initials */}
-      <span className="sta-initials">{initials}</span>
-
-      {/* Equalizer bars overlay (bottom) */}
-      <div className={`sta-eq ${isPlaying ? 'playing' : ''}`} aria-hidden="true">
-        {Array.from({ length: barCount }).map((_, i) => (
-          <div
-            key={i}
-            className="sta-eq-bar"
-            style={{ animationDelay: `${i * 0.18}s` }}
-          />
-        ))}
+      {/* Tonearm (Agulha) */}
+      <div className={`sta-vinyl-arm ${isPlaying ? 'playing' : ''}`}>
+        <div className="sta-vinyl-arm-base" />
+        <div className="sta-vinyl-arm-rod" />
+        <div className="sta-vinyl-arm-head" />
       </div>
     </div>
   );
 }
 
+// ─── Main component ───────────────────────────────────────────────────────────
 export default function UnifiedPlayerView({
   stations,
   currentStation,
@@ -82,24 +104,92 @@ export default function UnifiedPlayerView({
   volume,
   onVolumeChange,
 }: UnifiedPlayerViewProps) {
-  const [view, setView] = useState<'player' | 'list'>('player');
-  const [liked, setLiked] = useState(false);
+  const [view, setView] = useState<'player' | 'list' | 'favorites'>('player');
+  const [favorites, setFavorites] = useState<Station[]>(loadFavorites);
+  const [toast, setToast] = useState({ visible: false, message: '' });
   const waveHeights = useWaveHeights(36);
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   if (!currentStation) return null;
 
+  const isFavorited = favorites.some(f => f.id === currentStation.id);
+
+  // Show a brief toast message
+  const showToast = useCallback((message: string) => {
+    setToast({ visible: true, message });
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => setToast(t => ({ ...t, visible: false })), 2200);
+  }, []);
+
+  // Toggle favorite for ANY station
+  const toggleFavorite = useCallback((station: Station, e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    setFavorites(prev => {
+      const exists = prev.some(f => f.id === station.id);
+      const next = exists
+        ? prev.filter(f => f.id !== station.id)
+        : [station, ...prev];
+      saveFavorites(next);
+      showToast(exists ? `Removido dos favoritos` : `${station.name} adicionado!`);
+      return next;
+    });
+  }, [showToast]);
+
   const handlePrev = () => {
-    const idx = stations.findIndex(s => s.id === currentStation.id);
+    const list = view === 'favorites' ? favorites : stations;
+    const idx = list.findIndex(s => s.id === currentStation.id);
     if (idx === -1) return;
-    onSelectStation(stations[idx === 0 ? stations.length - 1 : idx - 1]);
+    onSelectStation(list[idx === 0 ? list.length - 1 : idx - 1]);
   };
 
   const handleNext = () => {
-    const idx = stations.findIndex(s => s.id === currentStation.id);
+    const list = view === 'favorites' ? favorites : stations;
+    const idx = list.findIndex(s => s.id === currentStation.id);
     if (idx === -1) return;
-    onSelectStation(stations[idx === stations.length - 1 ? 0 : idx + 1]);
+    onSelectStation(list[idx === list.length - 1 ? 0 : idx + 1]);
   };
 
+  // ── Station list item ──────────────────────────────────────────────────────
+  const StationItem = ({ station }: { station: Station }) => {
+    const isFav = favorites.some(f => f.id === station.id);
+    return (
+      <div
+        className={`mp-station-item ${currentStation.id === station.id ? 'active' : ''}`}
+        onClick={() => { onSelectStation(station); setView('player'); }}
+      >
+        <StationArtwork
+          station={station}
+          isPlaying={currentStation.id === station.id && isPlaying}
+          size="small"
+        />
+        <div className="mp-station-item-info">
+          <h4 className="mp-station-item-name">{station.name}</h4>
+          <p className="mp-station-item-freq">{station.frequency || 'Live Radio'}</p>
+        </div>
+        <button
+          className={`mp-item-fav-btn ${isFav ? 'saved' : ''}`}
+          onClick={e => toggleFavorite(station, e)}
+          aria-label={isFav ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
+          title={isFav ? 'Remover favorito' : 'Salvar favorito'}
+        >
+          <Heart size={14} strokeWidth={2.5}
+            fill={isFav ? '#FF4500' : 'none'}
+            color={isFav ? '#FF4500' : '#ccc'} />
+        </button>
+        <button
+          className={`mp-item-play-btn ${currentStation.id === station.id && isPlaying ? 'playing' : ''}`}
+          onClick={e => { e.stopPropagation(); onSelectStation(station); setView('player'); }}
+          aria-label="Tocar"
+        >
+          {currentStation.id === station.id && isPlaying
+            ? <Pause size={14} fill="#fff" color="#fff" />
+            : <Play size={14} fill="#fff" color="#fff" className="play-nudge" />}
+        </button>
+      </div>
+    );
+  };
+
+  // ── Player screen ──────────────────────────────────────────────────────────
   const PlayerScreen = (
     <div className="mp-player-screen">
       <div className="mp-header">
@@ -113,14 +203,12 @@ export default function UnifiedPlayerView({
       </div>
 
       <div className="mp-player-body">
-        {/* Artwork column */}
         <div className="mp-artwork-col">
           <div className="mp-artwork-wrap">
             <StationArtwork station={currentStation} isPlaying={isPlaying} size="large" />
           </div>
         </div>
 
-        {/* Controls column */}
         <div className="mp-controls-col">
           <div className="mp-info-row">
             <div className="mp-info-text">
@@ -128,17 +216,16 @@ export default function UnifiedPlayerView({
               <p className="mp-station-freq">{currentStation.frequency || 'Live Radio'}</p>
             </div>
             <div className="mp-info-actions">
+              {/* Heart = save to Favorites (persistent) */}
               <button
-                className={`mp-icon-btn ${liked ? 'liked' : ''}`}
-                onClick={() => setLiked(l => !l)}
-                aria-label="Curtir"
+                className={`mp-icon-btn ${isFavorited ? 'favorited' : ''}`}
+                onClick={() => toggleFavorite(currentStation)}
+                aria-label={isFavorited ? 'Remover dos favoritos' : 'Salvar nos favoritos'}
+                title={isFavorited ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
               >
                 <Heart size={20} strokeWidth={2}
-                  fill={liked ? '#FF4500' : 'none'}
-                  color={liked ? '#FF4500' : '#999'} />
-              </button>
-              <button className="mp-icon-btn" aria-label="Adicionar">
-                <Plus size={20} strokeWidth={2.5} color="#999" />
+                  fill={isFavorited ? '#FF4500' : 'none'}
+                  color={isFavorited ? '#FF4500' : '#999'} />
               </button>
             </div>
           </div>
@@ -197,6 +284,7 @@ export default function UnifiedPlayerView({
     </div>
   );
 
+  // ── List screen (All stations) ─────────────────────────────────────────────
   const ListScreen = (
     <div className="mp-list-screen">
       <div className="mp-header">
@@ -226,53 +314,60 @@ export default function UnifiedPlayerView({
             <span>Ouvir Agora</span>
           </button>
         </div>
-        {/* Artwork mini inside banner */}
         <StationArtwork station={currentStation} isPlaying={isPlaying} size="small" />
       </div>
 
       <div className="mp-list-section-title">Hot Stations</div>
-
       <div className="mp-station-list">
-        {stations.map(station => (
-          <div
-            key={station.id}
-            className={`mp-station-item ${currentStation.id === station.id ? 'active' : ''}`}
-            onClick={() => { onSelectStation(station); setView('player'); }}
-          >
-            <StationArtwork
-              station={station}
-              isPlaying={currentStation.id === station.id && isPlaying}
-              size="small"
-            />
-            <div className="mp-station-item-info">
-              <h4 className="mp-station-item-name">{station.name}</h4>
-              <p className="mp-station-item-freq">{station.frequency || 'Live Radio'}</p>
-            </div>
-            <button
-              className={`mp-item-play-btn ${currentStation.id === station.id && isPlaying ? 'playing' : ''}`}
-              onClick={e => { e.stopPropagation(); onSelectStation(station); setView('player'); }}
-              aria-label="Tocar"
-            >
-              {currentStation.id === station.id && isPlaying
-                ? <Pause size={14} fill="#fff" color="#fff" />
-                : <Play size={14} fill="#fff" color="#fff" className="play-nudge" />}
-            </button>
-          </div>
-        ))}
+        {stations.map(station => <StationItem key={station.id} station={station} />)}
       </div>
     </div>
   );
 
+  // ── Favorites screen ───────────────────────────────────────────────────────
+  const FavoritesScreen = (
+    <div className="mp-list-screen">
+      <div className="mp-header">
+        <button className="mp-icon-btn" onClick={() => setView('player')} aria-label="Voltar">
+          <ChevronLeft size={22} strokeWidth={2.5} />
+        </button>
+        <span className="mp-header-title">Favoritos</span>
+        <div style={{ width: 38 }} />
+      </div>
+
+      {favorites.length === 0 ? (
+        <div className="mp-empty-favs">
+          <Star size={48} color="#E0E0E0" strokeWidth={1.5} />
+          <p className="mp-empty-favs-title">Nenhum favorito ainda</p>
+          <p className="mp-empty-favs-sub">
+            Toque em <strong>+</strong> em qualquer estação para salvar aqui
+          </p>
+          <button className="mp-empty-favs-btn" onClick={() => setView('list')}>
+            Ver todas as estações
+          </button>
+        </div>
+      ) : (
+        <>
+          <div className="mp-list-section-title">Minhas Estações</div>
+          <div className="mp-station-list">
+            {favorites.map(station => <StationItem key={station.id} station={station} />)}
+          </div>
+        </>
+      )}
+    </div>
+  );
+
+  // ── Root ───────────────────────────────────────────────────────────────────
   return (
     <div className="mp-root">
+      <Toast message={toast.message} visible={toast.visible} />
+
       {/* Mobile / Tablet Portrait */}
       <div className="mp-mobile-shell">
-        <div className={`mp-screen ${view === 'player' ? 'visible' : 'hidden'}`}>
-          {PlayerScreen}
-        </div>
-        <div className={`mp-screen ${view === 'list' ? 'visible' : 'hidden'}`}>
-          {ListScreen}
-        </div>
+        <div className={`mp-screen ${view === 'player' ? 'visible' : 'hidden'}`}>{PlayerScreen}</div>
+        <div className={`mp-screen ${view === 'list' ? 'visible' : 'hidden'}`}>{ListScreen}</div>
+        <div className={`mp-screen ${view === 'favorites' ? 'visible' : 'hidden'}`}>{FavoritesScreen}</div>
+
         <nav className="mp-bottom-nav" aria-label="Navegação principal">
           <button className={`mp-nav-btn ${view === 'player' ? 'active' : ''}`}
             onClick={() => setView('player')} aria-label="Player">
@@ -284,12 +379,37 @@ export default function UnifiedPlayerView({
             <List size={21} strokeWidth={2} />
             <span>Estações</span>
           </button>
+          <button className={`mp-nav-btn ${view === 'favorites' ? 'active' : ''}`}
+            onClick={() => setView('favorites')} aria-label="Favoritos">
+            <div className="mp-nav-fav-wrap">
+              <Star size={21} strokeWidth={2} />
+              {favorites.length > 0 && (
+                <span className="mp-fav-badge">{favorites.length > 9 ? '9+' : favorites.length}</span>
+              )}
+            </div>
+            <span>Favoritos</span>
+          </button>
         </nav>
       </div>
 
       {/* Desktop / Tablet Landscape */}
       <div className="mp-desktop-shell">
-        <div className="mp-desktop-list">{ListScreen}</div>
+        <div className="mp-desktop-list">
+          {/* Tab bar inside list panel */}
+          <div className="mp-desktop-tabs">
+            <button className={`mp-desktop-tab ${view !== 'favorites' ? 'active' : ''}`}
+              onClick={() => setView('list')}>
+              <List size={16} strokeWidth={2} /> Todas
+            </button>
+            <button className={`mp-desktop-tab ${view === 'favorites' ? 'active' : ''}`}
+              onClick={() => setView('favorites')}>
+              <Star size={16} strokeWidth={2} />
+              Favoritos
+              {favorites.length > 0 && <span className="mp-fav-badge">{favorites.length > 9 ? '9+' : favorites.length}</span>}
+            </button>
+          </div>
+          {view === 'favorites' ? FavoritesScreen : ListScreen}
+        </div>
         <div className="mp-desktop-player">{PlayerScreen}</div>
       </div>
     </div>

@@ -1,0 +1,289 @@
+/* =====================================================
+   SPLASH SCREEN — Radio App Onboarding
+   ===================================================== */
+
+.splash-root {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  opacity: 0;
+  transform: scale(1.03);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.splash-root.splash-in {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ── Warm gradient top-right corner ── */
+.splash-bg-gradient {
+  position: absolute;
+  top: -60px;
+  right: -80px;
+  width: 340px;
+  height: 340px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 60% 40%, #FFDBC4 0%, #FFCBA4 30%, rgba(255, 180, 130, 0.15) 65%, transparent 100%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ── Headline ── */
+.splash-text-block {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 480px;
+  padding: 56px 32px 0;
+  flex-shrink: 0;
+}
+
+.splash-headline {
+  font-family: 'Inter', 'Outfit', sans-serif;
+  font-size: clamp(2rem, 7vw, 2.8rem);
+  font-weight: 900;
+  color: #111111;
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+}
+
+/* ── Hero image ── */
+.splash-image-wrap {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
+  margin-top: -10px;
+}
+
+.splash-img {
+  width: 100%;
+  max-width: 420px;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  display: block;
+  user-select: none;
+  animation: splash-float 4s ease-in-out infinite;
+}
+
+@keyframes splash-float {
+  0%   { transform: translateY(0px); }
+  50%  { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
+}
+
+/* ── Bottom: dots + button ── */
+.splash-bottom {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding: 12px 28px calc(28px + env(safe-area-inset-bottom, 0px));
+  background: linear-gradient(to top, #fff 60%, transparent 100%);
+  flex-shrink: 0;
+}
+
+/* ── Dots ── */
+.splash-dots {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.splash-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #D8D8D8;
+  transition: background 0.3s, width 0.3s;
+}
+
+.splash-dot.active {
+  width: 22px;
+  border-radius: 4px;
+  background: #FF4500;
+}
+
+/* ── CTA Button ── */
+.splash-cta {
+  width: 100%;
+  max-width: 340px;
+  height: 56px;
+  border-radius: 28px;
+  background: #FF4500;
+  border: none;
+  color: #ffffff;
+  font-family: 'Inter', 'Outfit', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(255, 69, 0, 0.40);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.splash-cta:hover {
+  background: #E53E00;
+  transform: translateY(-2px);
+  box-shadow: 0 14px 36px rgba(255, 69, 0, 0.50);
+}
+
+.splash-cta:active {
+  transform: translateY(0px) scale(0.97);
+  box-shadow: 0 6px 18px rgba(255, 69, 0, 0.30);
+}
+
+/* ══════════════════════════════════════════
+   LANDSCAPE MOBILE
+══════════════════════════════════════════ */
+@media (orientation: landscape) and (max-height: 500px) {
+  .splash-root {
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .splash-bg-gradient {
+    width: 200px;
+    height: 200px;
+    top: -40px;
+    right: -40px;
+  }
+
+  .splash-text-block {
+    width: 50%;
+    padding: 32px 24px 0 28px;
+    display: flex;
+    align-items: center;
+  }
+
+  .splash-headline {
+    font-size: clamp(1.4rem, 4vw, 2rem);
+  }
+
+  .splash-image-wrap {
+    width: 50%;
+    margin-top: 0;
+    align-items: center;
+  }
+
+  .splash-img {
+    max-width: 260px;
+    animation: none; /* disable float in landscape */
+  }
+
+  .splash-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 10px 28px calc(10px + env(safe-area-inset-bottom, 0px));
+    background: linear-gradient(to top, rgba(255,255,255,0.96) 70%, transparent);
+  }
+
+  .splash-cta {
+    max-width: 220px;
+    height: 46px;
+    font-size: 0.9rem;
+  }
+}
+
+/* ══════════════════════════════════════════
+   TABLET / DESKTOP: card centered
+══════════════════════════════════════════ */
+@media (min-width: 600px) and (orientation: portrait) {
+  .splash-text-block {
+    padding-top: 72px;
+    padding-left: 36px;
+    padding-right: 36px;
+  }
+
+  .splash-headline {
+    font-size: 3rem;
+  }
+
+  .splash-img {
+    max-width: 360px;
+  }
+
+  .splash-cta {
+    max-width: 360px;
+    height: 60px;
+    font-size: 1.05rem;
+  }
+}
+
+@media (min-width: 900px) {
+  .splash-root {
+    background: linear-gradient(135deg, #FF4500 0%, #ff7043 100%);
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* Card shell on desktop */
+  .splash-root::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+  }
+
+  .splash-text-block,
+  .splash-image-wrap,
+  .splash-bottom {
+    max-width: 400px;
+  }
+
+  /* Wrap inner content in a phone card */
+  .splash-text-block {
+    background: #fff;
+    border-radius: 40px 40px 0 0;
+    padding-top: 52px;
+    z-index: 2;
+    width: 400px;
+    margin-top: 0;
+    overflow: visible;
+  }
+
+  .splash-image-wrap {
+    background: #fff;
+    width: 400px;
+    z-index: 2;
+  }
+
+  .splash-bottom {
+    background: #fff;
+    border-radius: 0 0 40px 40px;
+    width: 400px;
+    z-index: 2;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.20);
+    padding-bottom: 36px;
+  }
+
+  .splash-bg-gradient {
+    width: 260px;
+    height: 260px;
+    top: -50px;
+    right: -60px;
+  }
+}

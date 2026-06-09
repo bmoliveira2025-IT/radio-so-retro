@@ -78,6 +78,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
 
   } catch (error) {
-    if (!res.headersSent) res.status(500).json({ title: null });
+    if (!res.headersSent) res.status(200).json({ title: null });
   }
 }

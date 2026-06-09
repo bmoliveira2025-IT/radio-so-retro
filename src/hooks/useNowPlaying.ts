@@ -85,7 +85,11 @@ export function useNowPlaying(stationUrl: string | null, stationName: string): N
       }
 
       // --- Nossa API Vercel (Proxy ICY Metadata) ---
-      // Acessa a edge function /api/meta que extrai corretamente os metadados
+      // Acessa a edge function /api/meta que extrai corretamente os metadados (apenas em produção)
+      if (import.meta.env.DEV) {
+        throw new Error("Skipping Vercel API proxy in local dev environment to prevent Vite compiler errors");
+      }
+      
       const proxyUrl = `/api/meta?url=${encodeURIComponent(stationUrl)}`;
       const metaRes = await fetch(proxyUrl, { signal: AbortSignal.timeout(6000) });
       if (metaRes.ok) {

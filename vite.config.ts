@@ -10,11 +10,11 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['logo.png'],
       manifest: {
-        name: 'Só Retrô',
+        name: 'Só Retrô Radio',
         short_name: 'Só Retrô',
-        description: 'A melhor experiência em rádios dos anos 80 e 90',
-        theme_color: '#06050b',
-        background_color: '#06050b',
+        description: 'Player de rádio online — os melhores anos 80, 90 e mais',
+        theme_color: '#FF4500',
+        background_color: '#FFFFFF',
         display: 'standalone',
         orientation: 'any',
         icons: [

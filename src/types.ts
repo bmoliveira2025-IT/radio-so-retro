@@ -4,4 +4,5 @@ export interface Station {
   frequency: string;
   url: string;
   color: string;
+  logo?: string;
 }

@@ -53,7 +53,17 @@ function App() {
             if (!st.url_resolved || !st.url_resolved.startsWith('https://')) return false;
             if (st.url_resolved.includes('.m3u8')) return false; // Native audio doesn't support HLS
             const name = st.name.toLowerCase();
-            if (name.includes('gaúcha') || name.includes('gaucha') || name.includes('saudade') || name.includes('bandeirantes') || name.includes('orquestrada') || name.includes('motel') || name.includes('drumon') || name.includes('dumont') || name.includes('instrumental') || name.includes('istrumental')) return false;
+            if (
+              name.includes('gaúcha') || name.includes('gaucha') || 
+              name.includes('saudade') || name.includes('bandeirantes') || 
+              name.includes('orquestrada') || name.includes('motel') || 
+              name.includes('drumon') || name.includes('dumont') || 
+              name.includes('instrumental') || name.includes('istrumental') ||
+              name.includes('top 40') || name.includes('top 100') ||
+              name.includes('top40') || name.includes('top100')
+            ) {
+              return false;
+            }
             return !badDomains.some(domain => st.url_resolved.includes(domain));
           });
           

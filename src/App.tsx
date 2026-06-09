@@ -5,6 +5,8 @@ import type { Station } from './types';
 
 // Fallback initial stations
 const fallbackStations: Station[] = [
+  { id: 'heart-80s', name: 'Heart 80s', frequency: '80S HITS', url: 'https://icecast.media.global.com/Heart80sMP3', color: '#ff1493' },
+  { id: 'heart-90s', name: 'Heart 90s', frequency: '90S HITS', url: 'https://icecast.media.global.com/Heart90sMP3', color: '#4facfe' },
   { id: '1', name: 'Eurodance 90s', frequency: 'CLASSIC', url: 'https://0nlineradio.radioho.st/technolovers-eurodance', color: '#ff2a5f' },
   { id: '2', name: 'Pop Hits Brasil', frequency: 'POP', url: 'https://ice6.somafm.com/poptron-128-mp3', color: '#00f2fe' },
   { id: '3', name: 'Classic Rock BR', frequency: 'ROCK', url: 'https://ice6.somafm.com/seventies-128-mp3', color: '#ffb300' }
@@ -63,7 +65,9 @@ function App() {
               name.includes('top40') || name.includes('top100') ||
               name.includes('- 0 n -') || name.includes('- 1 a -') ||
               name.includes('0 n -') || name.includes('1 a -') ||
-              name.includes('- 0n -') || name.includes('- 1a -')
+              name.includes('- 0n -') || name.includes('- 1a -') ||
+              name.includes('__main__') || name.includes('rautemusik') ||
+              name.includes('wantuki') || name.includes('alexfm')
             ) {
               return false;
             }

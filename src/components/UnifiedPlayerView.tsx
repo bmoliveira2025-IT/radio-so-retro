@@ -78,8 +78,12 @@ function StationArtwork({ station, isPlaying, size = 'large' }: {
       {/* Retro Vinyl Record */}
       <div className={`sta-vinyl ${isPlaying ? 'spinning' : ''}`}>
         <div className="sta-vinyl-grooves" />
-        <div className="sta-vinyl-label" style={{ background: color }}>
-          <span className="sta-vinyl-initials">{initials}</span>
+        <div className="sta-vinyl-label" style={{ background: station.logo ? '#ffffff' : color }}>
+          {station.logo ? (
+            <img src={station.logo} className="sta-vinyl-logo" alt={station.name} />
+          ) : (
+            <span className="sta-vinyl-initials">{initials}</span>
+          )}
         </div>
         <div className="sta-vinyl-shine" />
       </div>

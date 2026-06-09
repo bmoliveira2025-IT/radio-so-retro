@@ -242,6 +242,21 @@
   margin-bottom: 25%;
 }
 
+/* Logo on the label */
+.sta-vinyl-logo {
+  width: 75%;
+  height: 75%;
+  object-fit: contain;
+  z-index: 1;
+  padding: 2px;
+}
+
+.sta-artwork--small .sta-vinyl-logo {
+  width: 85%;
+  height: 85%;
+  padding: 0;
+}
+
 /* Vinyl Shine (static gradient that stays put while vinyl spins) */
 .sta-vinyl-shine {
   position: absolute;

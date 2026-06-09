@@ -14,6 +14,29 @@ const fallbackStations: Station[] = [
 // Vibrant palette to override dark hashes
 const vibrantColors = ['#ff2a5f', '#00f2fe', '#ffb300', '#ff1493', '#4facfe', '#f83600', '#00c6ff', '#43e97b', '#a18cd1', '#ff0844', '#ffd700'];
 
+const MIRRORS = [
+  'https://de1.api.radio-browser.info',
+  'https://at1.api.radio-browser.info',
+  'https://nl1.api.radio-browser.info'
+];
+
+async function fetchFromAPI(path: string): Promise<any[]> {
+  for (const mirror of MIRRORS) {
+    try {
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), 4000);
+      const res = await fetch(`${mirror}${path}`, { signal: controller.signal });
+      clearTimeout(id);
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (e) {
+      console.warn(`Mirror ${mirror} failed for path ${path}:`, e);
+    }
+  }
+  return [];
+}
+
 function App() {
   const [stations, setStations] = useState<Station[]>(fallbackStations);
   const [currentStation, setCurrentStation] = useState<Station>(fallbackStations[0]);
@@ -27,19 +50,13 @@ function App() {
     const fetchStations = async () => {
       try {
         // Fetch top 30 Brazilian + Top 30 International (90s, dance, pop, rock) + Custom Requests
-        const [resBR, resInt, resA1, resJP, resRC] = await Promise.all([
-          fetch('https://de1.api.radio-browser.info/json/stations/search?country=Brazil&limit=30&hidebroken=true&is_https=true&order=votes&reverse=true'),
-          fetch('https://de1.api.radio-browser.info/json/stations/search?tagList=90s,dance,pop,rock&limit=40&hidebroken=true&is_https=true&order=votes&reverse=true'),
-          fetch('https://de1.api.radio-browser.info/json/stations/search?name=Antena%201&country=Brazil&limit=1&is_https=true'),
-          fetch('https://de1.api.radio-browser.info/json/stations/search?name=Jovem%20Pan&country=Brazil&limit=1&is_https=true'),
-          fetch('https://de1.api.radio-browser.info/json/stations/search?name=Cidade&country=Brazil&limit=1&is_https=true')
+        const [dataBR, dataInt, dataA1, dataJP, dataRC] = await Promise.all([
+          fetchFromAPI('/json/stations/search?country=Brazil&limit=30&hidebroken=true&is_https=true&order=votes&reverse=true'),
+          fetchFromAPI('/json/stations/search?tagList=90s,dance,pop,rock&limit=40&hidebroken=true&is_https=true&order=votes&reverse=true'),
+          fetchFromAPI('/json/stations/search?name=Antena%201&country=Brazil&limit=1&is_https=true'),
+          fetchFromAPI('/json/stations/search?name=Jovem%20Pan&country=Brazil&limit=1&is_https=true'),
+          fetchFromAPI('/json/stations/search?name=Cidade&country=Brazil&limit=1&is_https=true')
         ]);
-        
-        const dataBR = await resBR.json();
-        const dataInt = await resInt.json();
-        const dataA1 = await resA1.json();
-        const dataJP = await resJP.json();
-        const dataRC = await resRC.json();
         
         // Remove duplicates and put custom requests at the very top
         const combinedData = [...dataA1, ...dataJP, ...dataRC, ...dataBR, ...dataInt];

@@ -60,7 +60,10 @@ function App() {
               name.includes('drumon') || name.includes('dumont') || 
               name.includes('instrumental') || name.includes('istrumental') ||
               name.includes('top 40') || name.includes('top 100') ||
-              name.includes('top40') || name.includes('top100')
+              name.includes('top40') || name.includes('top100') ||
+              name.includes('- 0 n -') || name.includes('- 1 a -') ||
+              name.includes('0 n -') || name.includes('1 a -') ||
+              name.includes('- 0n -') || name.includes('- 1a -')
             ) {
               return false;
             }

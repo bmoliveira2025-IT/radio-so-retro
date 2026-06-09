@@ -104,7 +104,7 @@ export default function UnifiedPlayerView({
   volume,
   onVolumeChange,
 }: UnifiedPlayerViewProps) {
-  const [view, setView] = useState<'player' | 'list' | 'favorites'>('player');
+  const [view, setView] = useState<'player' | 'list' | 'favorites'>('list');
   const [favorites, setFavorites] = useState<Station[]>(loadFavorites);
   const [toast, setToast] = useState({ visible: false, message: '' });
   const [searchQuery, setSearchQuery] = useState('');

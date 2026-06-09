@@ -80,7 +80,11 @@ function StationArtwork({ station, isPlaying, size = 'large' }: {
         <div className="sta-vinyl-grooves" />
         <div className="sta-vinyl-label" style={{ background: station.logo ? '#ffffff' : color }}>
           {station.logo ? (
-            <img src={station.logo} className="sta-vinyl-logo" alt={station.name} />
+            <img 
+              src={station.logo} 
+              className={`sta-vinyl-logo ${station.logo.includes('heart') ? 'logo-contain' : 'logo-cover'}`} 
+              alt={station.name} 
+            />
           ) : (
             <span className="sta-vinyl-initials">{initials}</span>
           )}

@@ -244,17 +244,32 @@
 
 /* Logo on the label */
 .sta-vinyl-logo {
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.sta-vinyl-logo.logo-contain {
   width: 75%;
   height: 75%;
   object-fit: contain;
-  z-index: 1;
   padding: 2px;
 }
 
-.sta-artwork--small .sta-vinyl-logo {
+.sta-vinyl-logo.logo-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sta-artwork--small .sta-vinyl-logo.logo-contain {
   width: 85%;
   height: 85%;
   padding: 0;
+}
+
+.sta-artwork--small .sta-vinyl-logo.logo-cover {
+  width: 100%;
+  height: 100%;
 }
 
 /* Vinyl Shine (static gradient that stays put while vinyl spins) */

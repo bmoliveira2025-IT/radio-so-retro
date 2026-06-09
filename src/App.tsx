@@ -7,7 +7,7 @@ import type { Station } from './types';
 const fallbackStations: Station[] = [
   { id: 'heart-80s', name: 'Heart 80s', frequency: '80S HITS', url: 'https://media-ssl.musicradio.com/Heart80sMP3', color: '#ff1493', logo: '/heart-logo.png' },
   { id: 'heart-90s', name: 'Heart 90s', frequency: '90S HITS', url: 'https://media-ssl.musicradio.com/Heart90sMP3', color: '#4facfe', logo: '/heart-logo.png' },
-  { id: '1', name: 'Eurodance 90s', frequency: 'CLASSIC', url: 'https://0nlineradio.radioho.st/technolovers-eurodance', color: '#ff2a5f' },
+  { id: '1', name: 'Eurodance 90s', frequency: 'CLASSIC', url: 'https://0nlineradio.radioho.st/technolovers-eurodance', color: '#ff2a5f', logo: '/eurodance-logo.png' },
   { id: '3', name: 'Classic Rock BR', frequency: 'ROCK', url: 'https://ice6.somafm.com/seventies-128-mp3', color: '#ffb300' }
 ];
 
@@ -99,6 +99,7 @@ function App() {
             }
             
             const isHeart = cleanName.toLowerCase().includes('heart');
+            const isEurodance = cleanName.toLowerCase().includes('eurodance');
             
             return {
               id: st.stationuuid,
@@ -106,7 +107,7 @@ function App() {
               frequency: st.tags.split(',')[0]?.toUpperCase() || 'BRAZIL',
               url: st.url_resolved,
               color: vibrantColors[index % vibrantColors.length],
-              logo: isHeart ? '/heart-logo.png' : undefined
+              logo: isHeart ? '/heart-logo.png' : isEurodance ? '/eurodance-logo.png' : undefined
             };
           });
 

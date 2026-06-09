@@ -84,7 +84,10 @@ function App() {
               name.includes('- 0n -') || name.includes('- 1a -') ||
               name.includes('__main__') || name.includes('rautemusik') ||
               name.includes('wantuki') || name.includes('alexfm') ||
-              name.includes('pop hits brasil')
+              name.includes('pop hits brasil') || name.includes('bossa jazz') ||
+              name.includes('smooth jazz') || name.includes('grenal') ||
+              name.includes('mgt sertanejo') || name.includes('metropolitana') ||
+              name.includes('itatiaia')
             ) {
               return false;
             }
@@ -104,6 +107,10 @@ function App() {
             const isAntena1 = cleanLower.includes('antena 1') || cleanLower.includes('antena um') || cleanLower.includes('antena de roma');
             const isJovemPan = cleanLower.includes('jovem pan') || cleanLower.includes('jovempan');
             const isCidade = cleanLower.includes('cidade');
+            const isBonsTempos = cleanLower.includes('bons tempos') || cleanLower.includes('bons tempo');
+            const isTupi = cleanLower.includes('tupi');
+            const isClube = cleanLower.includes('clube');
+            const isCassete = cleanLower.includes('fita cassete') || cleanLower.includes('cassete');
             
             return {
               id: st.stationuuid,
@@ -116,7 +123,11 @@ function App() {
                     isClassicRock ? '/classic-rock-logo.jpg' : 
                     isAntena1 ? '/antena1-logo.png' : 
                     isJovemPan ? '/jovem-pan-logo.png' : 
-                    isCidade ? '/cidade-logo.png' : undefined
+                    isCidade ? '/cidade-logo.png' : 
+                    isBonsTempos ? '/bons-tempos-logo.png' : 
+                    isTupi ? '/tupi-logo.png' : 
+                    isClube ? '/clube-logo.png' : 
+                    isCassete ? '/cassete-logo.png' : undefined
             };
           });
 

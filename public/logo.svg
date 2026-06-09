@@ -3,7 +3,7 @@
   <circle cx="50" cy="50" r="46" stroke="url(#grad1)" stroke-width="2" opacity="0.6"/>
   
   <!-- Inner background circle (semi-transparent) -->
-  <circle cx="50" cy="50" r="42" fill="rgba(255,42,95,0.08)"/>
+  <circle cx="50" cy="50" r="42" fill="rgba(255,69,0,0.08)"/>
 
   <!-- Sound wave lines - left -->
   <rect x="12" y="38" width="4" height="24" rx="2" fill="url(#grad1)" opacity="0.9"/>
@@ -21,12 +21,12 @@
   <!-- Definitions -->
   <defs>
     <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#ff2a5f"/>
-      <stop offset="100%" stop-color="#ff00aa"/>
+      <stop offset="0%" stop-color="#FF6B35"/>
+      <stop offset="100%" stop-color="#FF4500"/>
     </linearGradient>
     <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#00d2ff"/>
-      <stop offset="100%" stop-color="#7b2ff7"/>
+      <stop offset="0%" stop-color="#FFA500"/>
+      <stop offset="100%" stop-color="#FF4500"/>
     </linearGradient>
   </defs>
 </svg>

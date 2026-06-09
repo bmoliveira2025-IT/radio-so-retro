@@ -2,7 +2,7 @@ import React, { useState, useRef, useCallback } from 'react';
 import {
   ChevronLeft, MoreVertical, Heart, Shuffle,
   SkipBack, SkipForward, Pause, Play, Repeat, List, Search, Radio,
-  Volume2, Volume1, Star
+  Volume2, Volume1, Star, X
 } from 'lucide-react';
 import type { Station } from '../types';
 import './UnifiedPlayerView.css';
@@ -107,12 +107,19 @@ export default function UnifiedPlayerView({
   const [view, setView] = useState<'player' | 'list' | 'favorites'>('player');
   const [favorites, setFavorites] = useState<Station[]>(loadFavorites);
   const [toast, setToast] = useState({ visible: false, message: '' });
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
   const waveHeights = useWaveHeights(36);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   if (!currentStation) return null;
 
   const isFavorited = favorites.some(f => f.id === currentStation.id);
+
+  const filteredStations = stations.filter(station =>
+    station.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (station.frequency && station.frequency.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
 
   // Show a brief toast message
   const showToast = useCallback((message: string) => {
@@ -288,38 +295,75 @@ export default function UnifiedPlayerView({
   const ListScreen = (
     <div className="mp-list-screen">
       <div className="mp-header">
-        <button className="mp-icon-btn" onClick={() => setView('player')} aria-label="Voltar">
-          <ChevronLeft size={22} strokeWidth={2.5} />
-        </button>
-        <span className="mp-header-title">Estações</span>
-        <button className="mp-icon-btn" aria-label="Pesquisar">
-          <Search size={20} strokeWidth={2.5} />
-        </button>
+        {isSearching ? (
+          <div className="mp-search-wrapper">
+            <div className="mp-search-container">
+              <Search size={18} className="mp-search-icon-inline" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                placeholder="Buscar rádio..."
+                className="mp-search-input"
+                autoFocus
+              />
+              {searchQuery && (
+                <button className="mp-search-clear-btn" onClick={() => setSearchQuery('')} aria-label="Limpar pesquisa">
+                  <X size={16} />
+                </button>
+              )}
+            </div>
+            <button className="mp-search-cancel-btn" onClick={() => { setIsSearching(false); setSearchQuery(''); }} aria-label="Cancelar busca">
+              Cancelar
+            </button>
+          </div>
+        ) : (
+          <>
+            <button className="mp-icon-btn" onClick={() => setView('player')} aria-label="Voltar">
+              <ChevronLeft size={22} strokeWidth={2.5} />
+            </button>
+            <span className="mp-header-title">Estações</span>
+            <button className="mp-icon-btn" onClick={() => setIsSearching(true)} aria-label="Pesquisar">
+              <Search size={20} strokeWidth={2.5} />
+            </button>
+          </>
+        )}
       </div>
 
-      {/* Featured Banner */}
-      <div
-        className="mp-featured-banner"
-        style={{ background: `linear-gradient(135deg, ${currentStation.color || '#FF4500'} 0%, ${currentStation.color || '#FF4500'}bb 100%)` }}
-        onClick={() => setView('player')}
-      >
-        <div className="mp-featured-info">
-          <span className="mp-featured-label">● AO VIVO</span>
-          <h3 className="mp-featured-name">{currentStation.name}</h3>
-          <button
-            className="mp-featured-play"
-            onClick={e => { e.stopPropagation(); setView('player'); if (!isPlaying) onTogglePlay(); }}
-          >
-            <Play size={14} fill="#FF4500" color="#FF4500" />
-            <span>Ouvir Agora</span>
-          </button>
+      {/* Featured Banner - hide when searching */}
+      {!isSearching && (
+        <div
+          className="mp-featured-banner"
+          style={{ background: `linear-gradient(135deg, ${currentStation.color || '#FF4500'} 0%, ${currentStation.color || '#FF4500'}bb 100%)` }}
+          onClick={() => setView('player')}
+        >
+          <div className="mp-featured-info">
+            <span className="mp-featured-label">● AO VIVO</span>
+            <h3 className="mp-featured-name">{currentStation.name}</h3>
+            <button
+              className="mp-featured-play"
+              onClick={e => { e.stopPropagation(); setView('player'); if (!isPlaying) onTogglePlay(); }}
+            >
+              <Play size={14} fill="#FF4500" color="#FF4500" />
+              <span>Ouvir Agora</span>
+            </button>
+          </div>
+          <StationArtwork station={currentStation} isPlaying={isPlaying} size="small" />
         </div>
-        <StationArtwork station={currentStation} isPlaying={isPlaying} size="small" />
-      </div>
+      )}
 
-      <div className="mp-list-section-title">Hot Stations</div>
+      <div className="mp-list-section-title">
+        {searchQuery ? `Resultados (${filteredStations.length})` : 'Hot Stations'}
+      </div>
       <div className="mp-station-list">
-        {stations.map(station => <StationItem key={station.id} station={station} />)}
+        {filteredStations.length > 0 ? (
+          filteredStations.map(station => <StationItem key={station.id} station={station} />)
+        ) : (
+          <div className="mp-empty-search">
+            <Search size={40} color="#CCCCCC" strokeWidth={1.5} />
+            <p className="mp-empty-search-text">Nenhuma rádio encontrada para "{searchQuery}"</p>
+          </div>
+        )}
       </div>
     </div>
   );

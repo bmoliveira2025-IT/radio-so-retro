@@ -1138,31 +1138,40 @@
    TABLET LANDSCAPE + SMALL DESKTOP
    (900px – 1199px)
 ══════════════════════════════════════════ */
-@media (min-width: 900px) {
+@media (min-width: 900px), (orientation: landscape) and (min-width: 700px) {
   /* Hide mobile shell, show desktop dual-panel */
   .mp-mobile-shell { display: none; }
 
   .mp-desktop-shell {
     display: flex;
     flex-direction: row;
-    width: 100%;
-    max-width: 900px;
-    height: 90dvh;
-    max-height: 820px;
-    border-radius: 36px;
+    width: 100vw;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    border-radius: 0;
     overflow: hidden;
-    box-shadow: 0 40px 100px rgba(0,0,0,0.18);
+    box-shadow: none;
   }
 
   /* List panel: left */
   .mp-desktop-list {
-    width: 340px;
-    min-width: 320px;
+    width: clamp(300px, 34vw, 460px);
+    min-width: 300px;
     background: var(--bg);
     display: flex;
     flex-direction: column;
     overflow: hidden;
     border-right: 1px solid var(--border);
+    transition: width var(--transition), min-width var(--transition), opacity var(--transition);
+  }
+
+  .mp-desktop-shell--list-collapsed .mp-desktop-list {
+    width: 0;
+    min-width: 0;
+    opacity: 0;
+    pointer-events: none;
+    border-right: 0;
   }
 
   /* Player panel: right */
@@ -1172,6 +1181,7 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    min-width: 0;
   }
 
   /* Inside desktop: player body is always side-by-side */
@@ -1183,8 +1193,36 @@
 
   .mp-desktop-player .mp-player-body {
     flex: 1;
-    flex-direction: column;
+    flex-direction: row;
     overflow: hidden;
+  }
+
+  .mp-desktop-player .mp-artwork-col {
+    width: clamp(240px, 42%, 560px);
+    min-width: 240px;
+    display: flex;
+    align-items: center;
+    padding: 16px 18px 20px 28px;
+    flex-shrink: 0;
+  }
+
+  .mp-desktop-player .mp-artwork-wrap {
+    padding: 0;
+    width: 100%;
+    max-height: 100%;
+  }
+
+  .mp-desktop-player .mp-artwork {
+    aspect-ratio: 1 / 1;
+    width: 100%;
+    max-height: min(74dvh, 560px);
+    border-radius: 22px;
+  }
+
+  .mp-desktop-player .mp-controls-col {
+    flex: 1;
+    justify-content: center;
+    padding-right: 10px;
   }
 
   /* Desktop list screen fills its panel */
@@ -1229,7 +1267,7 @@
 
   /* background for desktop root */
   .mp-root {
-    background: linear-gradient(135deg, #FF4500 0%, #ff7043 100%);
+    background: var(--white);
   }
 }
 
@@ -1238,13 +1276,13 @@
 ══════════════════════════════════════════ */
 @media (min-width: 1200px) {
   .mp-desktop-shell {
-    max-width: 1040px;
-    max-height: 860px;
-    border-radius: 40px;
+    max-width: none;
+    max-height: none;
+    border-radius: 0;
   }
 
   .mp-desktop-list {
-    width: 380px;
+    width: clamp(360px, 32vw, 520px);
   }
 
   .mp-desktop-player .mp-player-body {

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react';
 import {
-  ChevronLeft, MoreVertical, Heart, Shuffle,
+  ChevronLeft, ChevronRight, MoreVertical, Heart, Shuffle,
   SkipBack, SkipForward, Pause, Play, Repeat, List, Search, Radio,
   Volume2, Volume1, Star, X
 } from 'lucide-react';
@@ -122,6 +122,7 @@ export default function UnifiedPlayerView({
   const [toast, setToast] = useState({ visible: false, message: '' });
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
+  const [isDesktopListCollapsed, setIsDesktopListCollapsed] = useState(false);
   const waveHeights = useWaveHeights(36);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const nowPlaying = useNowPlaying(currentStation?.url ?? null, currentStation?.name ?? '');
@@ -178,6 +179,14 @@ export default function UnifiedPlayerView({
     onSelectStation(list[idx === list.length - 1 ? 0 : idx + 1]);
   };
 
+  const handlePlayerBack = () => {
+    const canCollapseList = window.matchMedia('(min-width: 900px), (orientation: landscape) and (min-width: 700px)').matches;
+    setView('list');
+    if (canCollapseList) {
+      setIsDesktopListCollapsed(prev => !prev);
+    }
+  };
+
   // ── Station list item ──────────────────────────────────────────────────────
   const StationItem = ({ station }: { station: Station }) => {
     const isFav = favorites.some(f => f.id === station.id);
@@ -222,8 +231,15 @@ export default function UnifiedPlayerView({
   const PlayerScreen = (
     <div className="mp-player-screen">
       <div className="mp-header">
-        <button className="mp-icon-btn" aria-label="Estações" onClick={() => setView('list')}>
-          <ChevronLeft size={22} strokeWidth={2.5} />
+        <button
+          className="mp-icon-btn"
+          aria-label={isDesktopListCollapsed ? 'Expandir lista de rádios' : 'Minimizar lista de rádios'}
+          onClick={handlePlayerBack}
+          title={isDesktopListCollapsed ? 'Expandir lista' : 'Minimizar lista'}
+        >
+          {isDesktopListCollapsed
+            ? <ChevronRight size={22} strokeWidth={2.5} />
+            : <ChevronLeft size={22} strokeWidth={2.5} />}
         </button>
         <span className="mp-header-title">Tocando agora</span>
         <button className="mp-icon-btn" aria-label="Opções" onClick={() => setView('list')}>
@@ -476,7 +492,7 @@ export default function UnifiedPlayerView({
       </div>
 
       {/* Desktop / Tablet Landscape */}
-      <div className="mp-desktop-shell">
+      <div className={`mp-desktop-shell ${isDesktopListCollapsed ? 'mp-desktop-shell--list-collapsed' : ''}`}>
         <div className="mp-desktop-list">
           {/* Tab bar inside list panel */}
           <div className="mp-desktop-tabs">
